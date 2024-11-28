@@ -3,7 +3,7 @@ name: CI/CD - Atualização de Versão com Java
 on:
   push:
     branches:
-      - '**'  # Isso irá acionar o workflow para qualquer branch (ajustado para todas as branches)
+      - '**'  # Isso irá acionar o workflow para qualquer branch
     paths:
       - 'pfizer/**'
       - 'pdvsync/**'
@@ -31,6 +31,18 @@ jobs:
 
     - name: Executar o arquivo JAR para atualizar a versão
       run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}  # Obtém o nome do branch (exclui 'refs/heads/')
+        # Obtém o nome do branch (exclui 'refs/heads/')
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
         echo "Nome do Branch: $BRANCH_NAME"  # Exibe o nome do branch
-        java -jar target/version-control-layouts.jar $BRANCH_NAME  # Passa o nome do branch para o JAR
+        
+        # Definindo o nome do trunk com base no nome do branch (suponha que seja 'main')
+        if [[ "$BRANCH_NAME" == "main" ]]; then
+          BRANCH_TRUNK="main"
+        else
+          BRANCH_TRUNK="develop"  # Defina o valor do trunk com base no seu fluxo de trabalho
+        fi
+
+        echo "Nome do Trunk: $BRANCH_TRUNK"  # Exibe o nome do trunk
+
+        # Executa o arquivo JAR passando o nome do branch e do trunk
+        java -jar target/version-control-layouts.jar $BRANCH_TRUNK $BRANCH_NAME
