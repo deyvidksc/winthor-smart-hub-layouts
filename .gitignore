@@ -1,0 +1,40 @@
+# Ignorar arquivos e diretórios criados por IDEs
+
+# Eclipse
+*.log
+*.bak
+*.swp
+*.class
+*.project
+*.metadata/
+*.settings/
+.idea/
+*.iml
+
+# Ignorar a pasta de compilação do Eclipse
+bin/
+
+# Ignorar arquivos do IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Ignorar arquivos temporários e caches
+*.tmp
+*.swp
+.DS_Store
+
+# Ignorar arquivos de sistema operacional
+Thumbs.db
+ehthumbs.db
+
+# Ignorar arquivos de dependências
+node_modules/
+target/
+build/
+
+# Ignorar arquivos de logs
+*.log
+
+# Ignorar arquivos do sistema de controle de versões
+.git/
