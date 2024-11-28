@@ -38,3 +38,5 @@ build/
 
 # Ignorar arquivos do sistema de controle de versões
 .git/
+
+/version-control/
