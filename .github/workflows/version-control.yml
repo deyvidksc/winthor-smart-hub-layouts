@@ -1,14 +1,11 @@
-name: CI/CD - Atualização de Versão com Java
+name: Version Update with Java
 
 on:
   push:
+    types:
+      - closed  # Aciona o workflow quando o PR for fechado (mesclado ou fechado sem mesclar)
     branches:
-      - '**'  # Isso irá acionar o workflow para qualquer branch
-    paths:
-      - 'pfizer/**'
-      - 'pdvsync/**'
-      - '**/versao.json'  # Aciona para qualquer alteração no versao.json
-
+      - main  # Aciona somente para PRs direcionados para a branch 'main'
 jobs:
   update_version:
     runs-on: ubuntu-latest
