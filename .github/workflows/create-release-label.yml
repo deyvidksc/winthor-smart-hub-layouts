@@ -35,9 +35,10 @@ jobs:
     - name: Determinar a branch de destino e criar a tag
       run: |
         BRANCH_NAME=${{ github.event.pull_request.base.ref }}
-        TAG_NAME="v$(date +'%Y.%m.%d')-release"  # Exemplo de tag, você pode ajustar o formato conforme necessário
+        TAG_NAME="v$(date +'%Y.%m.%d')-release"  # Exemplo de tag, use seu próprio formato
 
         echo "Criando tag para a branch: $BRANCH_NAME"
+        echo "Tag gerada: $TAG_NAME"  # Adicionando debug para verificar o valor de TAG_NAME
 
         if [[ "$BRANCH_NAME" == "main" ]]; then
           git tag -a "$TAG_NAME" -m "Release para main"
@@ -50,6 +51,7 @@ jobs:
 
     - name: Enviar a tag para o repositório
       run: |
+        echo "Enviando a tag $TAG_NAME para o repositório"
         git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/deyvidksc/winthor-smart-hub-layouts.git "$TAG_NAME"
 
     - name: Confirmar a tag criada
