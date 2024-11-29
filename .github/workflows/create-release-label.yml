@@ -15,11 +15,13 @@ jobs:
     steps:
     - name: Checkout do código
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Necessário para garantir que o histórico completo de tags seja baixado
 
     - name: Configurar usuário Git
       run: |
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"      
+        git config --global user.name "github-actions[bot]"
 
     - name: Verificar se o PR foi mesclado
       run: |
@@ -33,7 +35,7 @@ jobs:
     - name: Determinar a branch de destino e criar a tag
       run: |
         BRANCH_NAME=${{ github.event.pull_request.base.ref }}
-        TAG_NAME="v$(date +'%Y.%m.%d')-release"  # Exemplo de tag, use seu próprio formato
+        TAG_NAME="v$(date +'%Y.%m.%d')-release"  # Exemplo de tag, você pode ajustar o formato conforme necessário
 
         echo "Criando tag para a branch: $BRANCH_NAME"
 
@@ -49,8 +51,8 @@ jobs:
     - name: Enviar a tag para o repositório
       run: |
         git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/deyvidksc/winthor-smart-hub-layouts.git "$TAG_NAME"
-        # Usar a variável de ambiente GH_TOKEN com a sintaxe correta de acesso (em vez de tokens diretamente no código).
 
     - name: Confirmar a tag criada
       run: |
+        git fetch --tags  # Garantir que as tags remotas sejam recuperadas
         git tag -l  # Listar as tags para confirmar que a tag foi criada
