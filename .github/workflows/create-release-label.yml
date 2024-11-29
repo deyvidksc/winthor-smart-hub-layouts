@@ -47,8 +47,10 @@ jobs:
         fi
 
         # Enviar a tag para o repositório
-        git push origin "$TAG_NAME"
-
+    - name: Enviar a tag para o repositório
+      run: |
+        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/deyvidksc/winthor-smart-hub-layouts.git "$TAG_NAME"
+        
     - name: Confirmar a tag criada
       run: |
         git tag -l  # Listar as tags para confirmar que a tag foi criada
