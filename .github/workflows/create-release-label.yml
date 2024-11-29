@@ -46,11 +46,11 @@ jobs:
           exit 1
         fi
 
-        # Enviar a tag para o repositório
     - name: Enviar a tag para o repositório
       run: |
         git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/deyvidksc/winthor-smart-hub-layouts.git "$TAG_NAME"
-        
+        # Usar a variável de ambiente GH_TOKEN com a sintaxe correta de acesso (em vez de tokens diretamente no código).
+
     - name: Confirmar a tag criada
       run: |
         git tag -l  # Listar as tags para confirmar que a tag foi criada
