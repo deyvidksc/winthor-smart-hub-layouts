@@ -35,19 +35,25 @@ jobs:
     - name: Determinar a branch de destino e criar a tag
       run: |
         BRANCH_NAME=${{ github.event.pull_request.base.ref }}
-        TAG_NAME="v$(date +'%Y.%m.%d')-release"  # Exemplo de tag, use seu próprio formato
-
-        echo "Criando tag para a branch: $BRANCH_NAME"
-        echo "Tag gerada: $TAG_NAME"  # Adicionando debug para verificar o valor de TAG_NAME
+        echo "Branch de destino: $BRANCH_NAME"
 
         if [[ "$BRANCH_NAME" == "main" ]]; then
-          git tag -a "$TAG_NAME" -m "Release para main"
+          # Exemplo para versão do main: 1.35.0.1
+          VERSION="1.35.0.1"
+          TAG_NAME="v$VERSION"
         elif [[ "$BRANCH_NAME" == "develop" ]]; then
-          git tag -a "$TAG_NAME" -m "Release para develop"
+          # Exemplo para versão do develop: 1.36.0.1
+          VERSION="1.36.0.1"
+          TAG_NAME="v$VERSION"
         else
           echo "Branch não suportada para criação de tag. Abortando."
           exit 1
         fi
+
+        echo "Tag gerada: $TAG_NAME"
+        
+        # Criar a tag no repositório local
+        git tag -a "$TAG_NAME" -m "Release para $BRANCH_NAME"
 
     - name: Enviar a tag para o repositório
       run: |
