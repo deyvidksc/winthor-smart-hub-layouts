@@ -53,10 +53,10 @@ jobs:
 
           # Incrementa com base na branch
           if [[ "$BRANCH_NAME" == "main" ]]; then
-            # Para main, incrementa o build (não reseta patch ou build)
+            # Para main, incrementa o build
             build=$((build + 1))
           elif [[ "$BRANCH_NAME" == "develop" ]]; then
-            # Para develop, incrementa a versão patch e o build é resetado para 1
+            # Para develop, incrementa o patch e o build é resetado para 1
             patch=$((patch + 1))
             build=1
           else
@@ -68,6 +68,12 @@ jobs:
           NEW_VERSION="${major}.${minor}.${patch}.${build}"
           echo "Nova versão: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Criar Tag com a versão
+        run: |
+          # Criar uma tag usando a versão gerada
+          git tag "v${{ env.NEW_VERSION }}"
+          git push origin "v${{ env.NEW_VERSION }}"
 
       - name: Atualizar o arquivo de versão
         run: |
