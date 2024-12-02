@@ -54,7 +54,7 @@ jobs:
 
           for folder in $MODIFIED_FOLDERS; do
             # Ignorar as pastas não desejadas
-            if [[ "$folder" == ".github" || "$folder" == "version-control" ]]; then
+            if [[ "$folder" == ".github" || "$folder" == "version-control" || "$folder" == ".github" ]]; then
               continue
             fi
 
