@@ -94,4 +94,4 @@ jobs:
           tag_name: ${{ env.NEW_VERSION }}
           release_name: Release ${{ env.NEW_VERSION }}
           draft: false
-          prerelease: false
+          prerelease: true
