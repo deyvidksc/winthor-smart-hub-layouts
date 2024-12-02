@@ -94,4 +94,5 @@ jobs:
           # Removido o tag_prefix, já que você não quer prefixo
           #bump_version_scheme: minor  # Ajuste conforme necessário, mas é opcional aqui
           use_github_release_notes: true
-          tag_prefix: ""
+          tag_prefix: ""  
+          release_name: "${{ env.NEW_VERSION }}"
