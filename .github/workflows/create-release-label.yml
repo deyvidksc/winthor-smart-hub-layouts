@@ -8,11 +8,14 @@ on:
       - main
       - develop
 
+permissions:
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+
 jobs:
   release-on-push:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use o token correto aqui
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
