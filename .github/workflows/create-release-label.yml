@@ -95,3 +95,10 @@ jobs:
           release_name: Release ${{ env.NEW_VERSION }}
           draft: false
           prerelease: false
+
+     # - name: Gerar Release
+     #   uses: rymndhng/release-on-push-action@master
+     #   with:
+     #     use_github_release_notes: true
+     #     tag_prefix: ""  
+     #     release_name: ${{ env.NEW_VERSION }}
