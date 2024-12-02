@@ -23,6 +23,8 @@ jobs:
         run: |
           # A versão será passada como variável de ambiente do workflow anterior
           echo "NEW_VERSION=${{ github.event.workflow_run.outputs.NEW_VERSION }}" >> $GITHUB_ENV
+          # Imprimir para depuração
+          echo "Versão recebida do workflow anterior: ${{ github.event.workflow_run.outputs.NEW_VERSION }}"
 
       - name: Buscar arquivos modificados
         id: modified_files
@@ -30,6 +32,19 @@ jobs:
           # Identifica os arquivos modificados na PR entre o último commit e a base da PR
           git diff --name-only ${{ github.event.workflow_run.head_sha }} ${{ github.sha }} > changed_files.txt
           cat changed_files.txt
+          # Imprimir arquivos modificados para depuração
+          echo "Arquivos modificados:"
+          cat changed_files.txt
+
+      - name: Imprimir pastas modificadas
+        run: |
+          # A versão obtida do workflow anterior será utilizada para atualizar o version.json
+          NEW_VERSION="${{ env.NEW_VERSION }}"
+          MODIFIED_FOLDERS=$(grep -oP '^[^/]+(?=/)' changed_files.txt | sort -u)
+
+          # Imprimir as pastas modificadas
+          echo "Pastas modificadas:"
+          echo "$MODIFIED_FOLDERS"
 
       - name: Atualizar version.json nas pastas modificadas
         run: |
@@ -46,10 +61,12 @@ jobs:
             # Verifica se existe um arquivo version.json dentro da pasta
             VERSION_JSON_PATH="$folder/version.json"
             if [[ -f "$VERSION_JSON_PATH" ]]; then
-              echo "Atualizando $VERSION_JSON_PATH"
+              echo "Atualizando $VERSION_JSON_PATH com a versão $NEW_VERSION"
               # Atualiza a versão dentro do version.json
               jq ".versao = \"$NEW_VERSION\"" $VERSION_JSON_PATH > temp_version.json && mv temp_version.json $VERSION_JSON_PATH
               git add $VERSION_JSON_PATH
+            else
+              echo "Arquivo version.json não encontrado em $folder"
             fi
           done
 
