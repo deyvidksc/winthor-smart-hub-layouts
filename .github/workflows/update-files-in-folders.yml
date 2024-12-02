@@ -26,15 +26,33 @@ jobs:
           # Imprimir para depuração
           echo "Versão recebida do workflow anterior: ${{ github.event.workflow_run.outputs.NEW_VERSION }}"
 
-      - name: Buscar arquivos modificados
+      - name: Verificar o status do repositório
+        run: |
+          # Verifica o status e as alterações atuais do repositório
+          git status
+          git log --oneline --decorate -n 5
+
+      - name: Buscar arquivos modificados entre o PR e o main
         id: modified_files
         run: |
-          # Identifica os arquivos modificados na PR entre o último commit e a base da PR
-          git diff --name-only ${{ github.event.workflow_run.head_sha }} ${{ github.sha }} > changed_files.txt
+          # Obter o nome do branch atual
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+          # Atualiza o branch main com as últimas alterações remotas
+          git fetch origin main  # Atualiza o main local com o remoto
+
+          # Verifica as alterações entre o último commit do PR e o branch main
+          git diff --name-only origin/main...${{ github.sha }} > changed_files.txt
+          
+          # Debug: Exibe os arquivos modificados
+          echo "Arquivos modificados entre o PR e main:"
           cat changed_files.txt
-          # Imprimir arquivos modificados para depuração
-          echo "Arquivos modificados:"
-          cat changed_files.txt
+          
+          # Confirma se a comparação encontrou algo
+          if [ ! -s changed_files.txt ]; then
+            echo "Nenhum arquivo modificado encontrado entre o PR e o main."
+            exit 1  # Falha o workflow se não houver alterações
+          fi
 
       - name: Imprimir pastas modificadas
         run: |
