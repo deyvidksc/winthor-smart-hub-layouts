@@ -3,6 +3,7 @@ on:
   pull_request:
     types:
       - closed  # Aciona o workflow quando o PR for fechado
+      - completed
     branches:
       - main
       - develop  # Para monitorar as duas branches principais do repositório
