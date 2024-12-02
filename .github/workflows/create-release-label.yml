@@ -1,9 +1,9 @@
 name: CI/CD - Criar Tag de Release
+
 on:
   pull_request:
     types:
       - closed  # Aciona o workflow quando o PR for fechado
-      - completed
     branches:
       - main
       - develop  # Para monitorar as duas branches principais do repositório
@@ -11,10 +11,15 @@ on:
 jobs:
   release-on-push:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-      - uses: rymndhng/release-on-push-action@master
+      - name: Checkout do código
+        uses: actions/checkout@v3
+      
+      - name: Configurar o token do GitHub
+        run: echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Gerar Release
+        uses: rymndhng/release-on-push-action@master
         with:
           bump_version_scheme: minor
           use_github_release_notes: true
