@@ -8,11 +8,4 @@ on:
 permissions:
   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
  
-jobs:
-  update-version-json:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 
+ 
