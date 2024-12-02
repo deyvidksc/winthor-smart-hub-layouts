@@ -69,12 +69,6 @@ jobs:
           echo "Nova versão: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-      - name: Criar Tag com a versão
-        run: |
-          # Criar uma tag usando a versão gerada
-          git tag "v${{ env.NEW_VERSION }}"
-          git push origin "v${{ env.NEW_VERSION }}"
-
       - name: Atualizar o arquivo de versão
         run: |
           echo ${{ env.NEW_VERSION }} > version.txt
@@ -84,6 +78,12 @@ jobs:
           git commit -m "Atualizando versão para ${{ env.NEW_VERSION }}"
           git push origin ${{ github.ref }}
 
+      - name: Criar Tag com a versão
+        run: |
+          # Criar uma tag usando a versão gerada
+          git tag "v${{ env.NEW_VERSION }}"
+          git push origin "v${{ env.NEW_VERSION }}"
+          
       - name: Gerar Release
         uses: rymndhng/release-on-push-action@master
         with:
