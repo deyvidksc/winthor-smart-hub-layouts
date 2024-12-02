@@ -1,3 +1,15 @@
+name: CI/CD - Criar Tag de Release
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+
 jobs:
   release-on-push:
     runs-on: ubuntu-latest
@@ -64,14 +76,15 @@ jobs:
           git add version.txt
           git commit -m "Atualizando versão para ${{ env.NEW_VERSION }}"
 
-      - name: Fetch latest changes and merge
+      - name: Fetch latest changes from remote
         run: |
           git fetch origin
-          git pull origin ${{ github.ref }}  # Faz pull da branch remota (main ou develop)
-      
-      - name: Push changes
+          git checkout main  # Faz checkout na branch 'main'
+          git pull origin main  # Faz pull das últimas alterações da branch remota
+
+      - name: Push changes to remote
         run: |
-          git push origin ${{ github.ref }}
+          git push origin main  # Empurra as mudanças para a branch remota 'main'
 
       - name: Criar Tag com a versão
         run: |
@@ -88,4 +101,4 @@ jobs:
         with:
           use_github_release_notes: true
           tag_prefix: ""  
-          release_name: "${{ env.NEW_VERSION }}"
+          release_name: ${{ env.NEW_VERSION }}
