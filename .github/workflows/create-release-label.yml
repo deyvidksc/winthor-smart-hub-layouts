@@ -1,4 +1,5 @@
 name: CI/CD - Criar Tag de Release
+
 on:
   pull_request:
     types:
@@ -75,34 +76,14 @@ jobs:
           git config --global user.email "actions@github.com"
           git add version.txt
           git commit -m "Atualizando versão para ${{ env.NEW_VERSION }}"
-
-      - name: Fetch latest changes from remote
-        run: |
-          git fetch origin
-          git checkout main  # Faz checkout na branch 'main'
-          git pull origin main  # Faz pull das últimas alterações da branch remota
-
-      - name: Push changes to remote
-        run: |
-          git push origin main  # Empurra as mudanças para a branch remota 'main'
+          git push origin ${{ github.ref }}
 
       - name: Criar Tag com a versão
         run: |
           # Criar uma tag usando a versão gerada
           git tag "v${{ env.NEW_VERSION }}"
           git push origin "v${{ env.NEW_VERSION }}"
-
-      - name: Garantir que as tags sejam atualizadas
-        run: |
-          git fetch --tags  # Garante que as tags recentes sejam obtidas no contexto do workflow
-
-     # - name: Gerar Release
-     #   uses: rymndhng/release-on-push-action@master
-     #   with:
-     #     use_github_release_notes: true
-     #     tag_prefix: ""  
-     #     release_name: ${{ env.NEW_VERSION }}
-
+          
       - name: Gerar Release
         id: create_release
         uses: actions/create-release@v1
@@ -113,4 +94,3 @@ jobs:
           release_name: Release ${{ env.NEW_VERSION }}
           draft: false
           prerelease: false
-
