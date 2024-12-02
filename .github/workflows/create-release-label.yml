@@ -83,10 +83,14 @@ jobs:
           # Criar uma tag usando a versão gerada
           git tag "v${{ env.NEW_VERSION }}"
           git push origin "v${{ env.NEW_VERSION }}"
-          
+
+      - name: Garantir que as tags sejam atualizadas
+        run: |
+          git fetch --tags  # Garante que as tags recentes sejam obtidas no contexto do workflow
+
       - name: Gerar Release
-            uses: rymndhng/release-on-push-action@master
-            with:
-              bump_version_scheme: minor
-              use_github_release_notes: true
-              tag_name: ${{ env.NEW_VERSION }}  # Aqui associamos a tag gerada para criar a release
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: minor
+          use_github_release_notes: true
+          tag_name: "v${{ env.NEW_VERSION }}"  # Aqui associamos a tag gerada para criar a release
