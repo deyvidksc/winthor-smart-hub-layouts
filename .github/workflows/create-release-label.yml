@@ -1,5 +1,4 @@
 name: CI/CD - Criar Tag de Release
-
 on:
   pull_request:
     types:
@@ -9,79 +8,12 @@ on:
       - develop  # Para monitorar as duas branches principais do repositório
 
 jobs:
-  create_tag:
+  release-on-push:
     runs-on: ubuntu-latest
-
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-    - name: Checkout do código
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0  # Necessário para garantir que o histórico completo de tags seja baixado
-
-    - name: Verificar se o PR foi mesclado
-      run: |
-        if [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
-          echo "PR foi mesclado!"
-        else
-          echo "PR não foi mesclado. Abortando o processo."
-          exit 1
-        fi
-
-    - name: Determinar a branch de destino e criar a tag
-      run: |
-        BRANCH_NAME=${{ github.event.pull_request.base.ref }}
-        echo "Branch de destino: $BRANCH_NAME"
-
-        if [[ "$BRANCH_NAME" == "main" ]]; then
-          # Exemplo para versão do main: 1.35.0.1
-          VERSION="1.35.0.1"
-          TAG_NAME="v$VERSION"
-        elif [[ "$BRANCH_NAME" == "develop" ]]; then
-          # Exemplo para versão do develop: 1.36.0.1
-          VERSION="1.36.0.1"
-          TAG_NAME="v$VERSION"
-        else
-          echo "Branch não suportada para criação de tag. Abortando."
-          exit 1
-        fi
-
-        echo "Tag gerada: $TAG_NAME"
-        
-        # Criar a tag no repositório local
-        git tag -a "$TAG_NAME" -m "Release para $BRANCH_NAME"
-
-    - name: Enviar a tag para o repositório
-      run: |
-        echo "Enviando a tag $TAG_NAME para o repositório"
-        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/deyvidksc/winthor-smart-hub-layouts.git "$TAG_NAME"
-
-    - name: Confirmar a tag criada
-      run: |
-        git fetch --tags  # Garantir que as tags remotas sejam recuperadas
-        git tag -l  # Listar as tags para confirmar que a tag foi criada
-
-    - name: Generate zip
-      run: |
-        zip nfe.zip target/*.jar  # Cria o arquivo zip com os .jar
-
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.create_tag.outputs.tag_name }}  # Use a tag criada anteriormente
-        release_name: Release ${{ steps.create_tag.outputs.tag_name }}
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: nfe.zip
-        asset_name: nfe.zip
-        asset_content_type: application/zip
+      - uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: minor
+          use_github_release_notes: true
