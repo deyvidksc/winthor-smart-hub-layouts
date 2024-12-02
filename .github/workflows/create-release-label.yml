@@ -91,7 +91,7 @@ jobs:
       - name: Gerar Release
         uses: rymndhng/release-on-push-action@master
         with:
-          #bump_version_scheme: minor
-          tag_prefix: ""
+          # Removido o tag_prefix, já que você não quer prefixo
+          #bump_version_scheme: minor  # Ajuste conforme necessário, mas é opcional aqui
           use_github_release_notes: true
-          tag_name: "v${{ env.NEW_VERSION }}"  # Aqui associamos a tag gerada para criar a release
+          tag_prefix: ""
