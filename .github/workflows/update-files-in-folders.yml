@@ -35,14 +35,14 @@ jobs:
       - name: Buscar arquivos modificados entre o PR e o main
         id: modified_files
         run: |
-          # Obter o nome do branch atual
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-
+          # Nome do branch do PR
+          PR_BRANCH="${{ github.event.workflow_run.head_ref }}"
+          
           # Atualiza o branch main com as últimas alterações remotas
           git fetch origin main  # Atualiza o main local com o remoto
 
-          # Verifica as alterações entre o último commit do PR e o branch main
-          git diff --name-only origin/main...${{ github.sha }} > changed_files.txt
+          # Verifica as alterações entre o branch do PR e o branch main
+          git diff --name-only origin/main...$PR_BRANCH > changed_files.txt
           
           # Debug: Exibe os arquivos modificados
           echo "Arquivos modificados entre o PR e main:"
