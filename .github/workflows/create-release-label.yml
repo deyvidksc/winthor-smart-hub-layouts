@@ -53,12 +53,10 @@ jobs:
 
           # Incrementa com base na branch
           if [[ "$BRANCH_NAME" == "main" ]]; then
-            # Para main, incrementa a versão minor e reseta patch e build
-            minor=$((minor + 1))
-            patch=0
-            build=1
+            # Para main, incrementa o build (não reseta patch ou build)
+            build=$((build + 1))
           elif [[ "$BRANCH_NAME" == "develop" ]]; then
-            # Para develop, incrementa a versão patch e reseta build
+            # Para develop, incrementa a versão patch e o build é resetado para 1
             patch=$((patch + 1))
             build=1
           else
