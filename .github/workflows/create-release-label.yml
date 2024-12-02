@@ -18,11 +18,6 @@ jobs:
       with:
         fetch-depth: 0  # Necessário para garantir que o histórico completo de tags seja baixado
 
-    - name: Configurar usuário Git
-      run: |
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-
     - name: Verificar se o PR foi mesclado
       run: |
         if [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
@@ -64,3 +59,29 @@ jobs:
       run: |
         git fetch --tags  # Garantir que as tags remotas sejam recuperadas
         git tag -l  # Listar as tags para confirmar que a tag foi criada
+
+    - name: Generate zip
+      run: |
+        zip nfe.zip target/*.jar  # Cria o arquivo zip com os .jar
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.create_tag.outputs.tag_name }}  # Use a tag criada anteriormente
+        release_name: Release ${{ steps.create_tag.outputs.tag_name }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: nfe.zip
+        asset_name: nfe.zip
+        asset_content_type: application/zip
