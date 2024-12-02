@@ -41,16 +41,16 @@ jobs:
           if [[ "$BRANCH_NAME" == "main" ]]; then
             # Incrementa a versão da branch main
             IFS='.' read -r -a version_parts <<< "$VERSION"
-            version_parts[1]=$((version_parts[1] + 1))  # Incrementa a versão minor
+            version_parts[1]=$((version_parts[1]))  # Incrementa a versão minor
             version_parts[2]=0  # Reseta a versão patch
-            version_parts[3]=1  # Define build como 1
+            version_parts[3]=$((version_parts[3] + 1))  # Define build como 1
             NEW_VERSION="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}.${version_parts[3]}"
           elif [[ "$BRANCH_NAME" == "develop" ]]; then
             # Incrementa a versão da branch develop
             IFS='.' read -r -a version_parts <<< "$VERSION"
-            version_parts[1]=$((version_parts[1] + 1))  # Incrementa a versão minor
+            version_parts[1]=$((version_parts[1]))  # Incrementa a versão minor
             version_parts[2]=0  # Reseta a versão patch
-            version_parts[3]=1  # Define build como 1
+            version_parts[3]=$((version_parts[3] + 1))   # Define build como 1
             NEW_VERSION="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}.${version_parts[3]}"
           else
             echo "Branch não reconhecida para incremento de versão."
