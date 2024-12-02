@@ -7,6 +7,9 @@ on:
        - completed
        - success
 
+permissions:
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+
 jobs:
   update-version-json:
     runs-on: ubuntu-latest
