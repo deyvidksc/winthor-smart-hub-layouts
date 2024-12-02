@@ -96,9 +96,21 @@ jobs:
         run: |
           git fetch --tags  # Garante que as tags recentes sejam obtidas no contexto do workflow
 
+     # - name: Gerar Release
+     #   uses: rymndhng/release-on-push-action@master
+     #   with:
+     #     use_github_release_notes: true
+     #     tag_prefix: ""  
+     #     release_name: ${{ env.NEW_VERSION }}
+
       - name: Gerar Release
-        uses: rymndhng/release-on-push-action@master
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          use_github_release_notes: true
-          tag_prefix: ""  
-          release_name: ${{ env.NEW_VERSION }}
+          tag_name: ${{ env.NEW_VERSION }}
+          release_name: Release ${{ env.NEW_VERSION }}
+          draft: false
+          prerelease: false
+
