@@ -3,64 +3,85 @@ name: CI/CD - Criar Tag de Release
 on:
   pull_request:
     types:
-      - closed  # Aciona o workflow quando o PR for fechado
+      - closed
     branches:
       - main
-      - develop  # Para monitorar as duas branches principais do repositório
+      - develop
+
+permissions:
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
 
 jobs:
-  create_tag:
+  release-on-push:
     runs-on: ubuntu-latest
-
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
     steps:
-    - name: Checkout do código
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0  # Necessário para garantir que o histórico completo de tags seja baixado
+      - name: Checkout do código
+        uses: actions/checkout@v3
 
-    - name: Configurar usuário Git
-      run: |
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
+      - name: Ler versão atual
+        id: read_version
+        run: |
+          VERSION_FILE="version.txt"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(cat $VERSION_FILE)
+          else
+            VERSION="1.0.0.0"  # Caso o arquivo de versão não exista, começar com a versão inicial
+          fi
+          echo "VERSAO_ATUAL=$VERSION" >> $GITHUB_ENV
 
-    - name: Verificar se o PR foi mesclado
-      run: |
-        if [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
-          echo "PR foi mesclado!"
-        else
-          echo "PR não foi mesclado. Abortando o processo."
-          exit 1
-        fi
+      - name: Incrementar versão
+        id: increment_version
+        run: |
+          VERSION=${{ env.VERSAO_ATUAL }}
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
 
-    - name: Determinar a branch de destino e criar a tag
-      run: |
-        BRANCH_NAME=${{ github.event.pull_request.base.ref }}
-        echo "Branch de destino: $BRANCH_NAME"
+          # Extrair os 4 componentes da versão
+          IFS='.' read -r -a version_parts <<< "$VERSION"
+          
+          # Se a versão tem 4 componentes (major.minor.patch.build), processa
+          if [ ${#version_parts[@]} -eq 4 ]; then
+            major=${version_parts[0]}
+            minor=${version_parts[1]}
+            patch=${version_parts[2]}
+            build=${version_parts[3]}
+          else
+            echo "A versão não está no formato esperado (major.minor.patch.build)."
+            exit 1
+          fi
 
-        if [[ "$BRANCH_NAME" == "main" ]]; then
-          # Exemplo para versão do main: 1.35.0.1
-          VERSION="1.35.0.1"
-          TAG_NAME="v$VERSION"
-        elif [[ "$BRANCH_NAME" == "develop" ]]; then
-          # Exemplo para versão do develop: 1.36.0.1
-          VERSION="1.36.0.1"
-          TAG_NAME="v$VERSION"
-        else
-          echo "Branch não suportada para criação de tag. Abortando."
-          exit 1
-        fi
+          # Incrementa com base na branch
+          if [[ "$BRANCH_NAME" == "main" ]]; then
+            # Para main, incrementa a versão minor e reseta patch e build
+            minor=$((minor + 1))
+            patch=0
+            build=1
+          elif [[ "$BRANCH_NAME" == "develop" ]]; then
+            # Para develop, incrementa a versão patch e reseta build
+            patch=$((patch + 1))
+            build=1
+          else
+            echo "Branch não reconhecida para incremento de versão."
+            exit 1
+          fi
 
-        echo "Tag gerada: $TAG_NAME"
-        
-        # Criar a tag no repositório local
-        git tag -a "$TAG_NAME" -m "Release para $BRANCH_NAME"
+          # Cria a nova versão
+          NEW_VERSION="${major}.${minor}.${patch}.${build}"
+          echo "Nova versão: $NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-    - name: Enviar a tag para o repositório
-      run: |
-        echo "Enviando a tag $TAG_NAME para o repositório"
-        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/deyvidksc/winthor-smart-hub-layouts.git "$TAG_NAME"
+      - name: Atualizar o arquivo de versão
+        run: |
+          echo ${{ env.NEW_VERSION }} > version.txt
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add version.txt
+          git commit -m "Atualizando versão para ${{ env.NEW_VERSION }}"
+          git push origin ${{ github.ref }}
 
-    - name: Confirmar a tag criada
-      run: |
-        git fetch --tags  # Garantir que as tags remotas sejam recuperadas
-        git tag -l  # Listar as tags para confirmar que a tag foi criada
+      - name: Gerar Release
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: minor
+          use_github_release_notes: true
