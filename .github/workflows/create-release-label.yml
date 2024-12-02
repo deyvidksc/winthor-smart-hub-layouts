@@ -15,7 +15,7 @@ jobs:
   release-on-push:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use o token correto aqui
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
@@ -37,26 +37,37 @@ jobs:
           VERSION=${{ env.VERSAO_ATUAL }}
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
 
-          # Define a versão com base na branch
+          # Extrair os 4 componentes da versão
+          IFS='.' read -r -a version_parts <<< "$VERSION"
+          
+          # Se a versão tem 4 componentes (major.minor.patch.build), processa
+          if [ ${#version_parts[@]} -eq 4 ]; then
+            major=${version_parts[0]}
+            minor=${version_parts[1]}
+            patch=${version_parts[2]}
+            build=${version_parts[3]}
+          else
+            echo "A versão não está no formato esperado (major.minor.patch.build)."
+            exit 1
+          fi
+
+          # Incrementa com base na branch
           if [[ "$BRANCH_NAME" == "main" ]]; then
-            # Incrementa a versão da branch main
-            IFS='.' read -r -a version_parts <<< "$VERSION"
-            version_parts[1]=$((version_parts[1]))  # Incrementa a versão minor
-            version_parts[2]=0  # Reseta a versão patch
-            version_parts[3]=$((version_parts[3] + 1))  # Define build como 1
-            NEW_VERSION="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}.${version_parts[3]}"
+            # Para main, incrementa a versão minor e reseta patch e build
+            minor=$((minor + 1))
+            patch=0
+            build=1
           elif [[ "$BRANCH_NAME" == "develop" ]]; then
-            # Incrementa a versão da branch develop
-            IFS='.' read -r -a version_parts <<< "$VERSION"
-            version_parts[1]=$((version_parts[1]))  # Incrementa a versão minor
-            version_parts[2]=0  # Reseta a versão patch
-            version_parts[3]=$((version_parts[3] + 1))   # Define build como 1
-            NEW_VERSION="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}.${version_parts[3]}"
+            # Para develop, incrementa a versão patch e reseta build
+            patch=$((patch + 1))
+            build=1
           else
             echo "Branch não reconhecida para incremento de versão."
             exit 1
           fi
 
+          # Cria a nova versão
+          NEW_VERSION="${major}.${minor}.${patch}.${build}"
           echo "Nova versão: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
