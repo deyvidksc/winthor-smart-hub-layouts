@@ -83,6 +83,7 @@ jobs:
         run: |
           # Caminho para o arquivo JAR
           echo "Executando JAR com os parâmetros: Branch Trunk=${{ env.BRANCH_TRUNK }}, Branch Origin=${{ env.BRANCH_ORIGIN }}, Token=${{ secrets.GITHUB_TOKEN }}"
-          java -jar version-control/version-control-layouts.jar ${{ env.BRANCH_TRUNK }} ${{ env.BRANCH_ORIGIN }} ${{ secrets.GITHUB_TOKEN }}
+          # java -jar version-control/version-control-layouts.jar ${{ env.BRANCH_TRUNK }} ${{ env.BRANCH_ORIGIN }} ${{ secrets.GITHUB_TOKEN }}
+          java -jar version-control/version-control-layouts.jar ${{ env.BRANCH_TRUNK }} estudo_versoes ${{ secrets.GITHUB_TOKEN }}
 
  
