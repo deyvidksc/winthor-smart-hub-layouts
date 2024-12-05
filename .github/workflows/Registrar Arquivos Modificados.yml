@@ -1,0 +1,39 @@
+name: "CI/CD - Registrar Arquivos Modificados"
+
+on:
+  pull_request:
+    branches:
+      - main  # Ou qualquer branch que deseja monitorar para o merge
+
+permissions:
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+
+jobs:
+  track-modified-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Isso garante que você tenha o histórico completo para comparar as branches
+
+      - name: Obter arquivos modificados
+        run: |
+          # Registra os arquivos modificados na branch de origem (pr)
+          git diff --name-only origin/main...HEAD > modified_files.txt
+
+          # Se você deseja ver esses arquivos modificados no log de execução
+          echo "Arquivos modificados no PR:"
+          cat modified_files.txt
+
+      - name: Gravar arquivos modificados no repositório
+        run: |
+          # Adiciona o arquivo que contém a lista de arquivos modificados
+          git add modified_files.txt
+          git commit -m "Adicionando lista de arquivos modificados no PR"
+
+      - name: Push do arquivo modificado
+        run: |
+          # Realiza o push do arquivo modificado para o repositório
+          git push origin HEAD
