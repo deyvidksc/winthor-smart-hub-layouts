@@ -43,4 +43,4 @@ jobs:
             git add modified_files.txt
             git commit -m "Adicionando lista de arquivos modificados no PR"
           fi
-          git push origin ${{ github.ref }}
+          git push origin ${{ github.ref }} --force
