@@ -28,23 +28,23 @@ jobs:
           echo "Arquivos modificados no PR:"
           cat modified_files.txt
           
-      - name: Verificar se o arquivo 'modified_files.txt' já existe e atualizar
+      - name: Verificar e atualizar o arquivo 'modified_files.txt'
         run: |
           # Verifica se o arquivo 'modified_files.txt' já existe
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
           if [ -f "modified_files.txt" ]; then
-            # Se o arquivo já existe, apenas atualiza
+            # Se o arquivo já existe, apenas adiciona e faz um novo commit
             git add modified_files.txt
-            git commit --amend --no-edit -m "Atualizando lista de arquivos modificados no PR"
+            git commit -m "Atualizando lista de arquivos modificados no PR"
           else
-            # Caso contrário, cria um novo arquivo
+            # Caso contrário, cria um novo arquivo e faz o commit
             git add modified_files.txt
             git commit -m "Adicionando lista de arquivos modificados no PR"
-          fi  # Fechar o if corretamente
+          fi
 
-      - name: Push do arquivo atualizado
+      - name: Push do arquivo atualizado para a branch de origem
         run: |
-          # Realiza o push do arquivo modificado para o repositório
-          git push origin ${{ github.ref }} --force-with-lease
+          # Realiza o push para a branch de origem do PR
+          git push origin ${{ github.head_ref }} --force-with-lease
