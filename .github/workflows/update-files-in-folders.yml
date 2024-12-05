@@ -3,9 +3,9 @@ name: "CI/CD - Atualizar Version.json"
 on:
   workflow_run:
     workflows: ["CI/CD - Criar Tag de Release"]
-    branches:
-      - main
-      - develop
+    #branches:
+      #- main
+      #- develop
     types:
        - completed
        - success
