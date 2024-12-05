@@ -24,13 +24,11 @@ jobs:
           # Exibe a branch local (trunk)
           echo "Branch local (trunk): $(git rev-parse --abbrev-ref HEAD)"
 
-      - name: Print remote branch for PR (origin branch)
+      - name: Print remote branches (origin)
         run: |
-          # Obtém o nome da branch de origem do PR (head_ref)
-          PR_BRANCH="${{ github.head_ref }}"
-          
-          # Exibe a branch remota associada ao PR
-          echo "Branch remota associada ao PR (origin): origin/$PR_BRANCH"
+          # Exibe todas as branches remotas (origin)
+          echo "Branches remotas (origin):"
+          git branch -v
 
       - name: Print remote (origin) branch for current branch
         run: |
@@ -38,5 +36,3 @@ jobs:
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           echo "Branch remota (origin) associada à branch local ($CURRENT_BRANCH):"
           git rev-parse --abbrev-ref origin/$CURRENT_BRANCH
-
-      
