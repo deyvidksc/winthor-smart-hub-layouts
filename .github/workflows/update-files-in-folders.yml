@@ -1,33 +1,81 @@
-name: "CI/CD - Atualizar Version.json"
+# name: "CI/CD - Atualizar Version.json"
+
+# on:
+#   workflow_run:
+#     workflows: ["CI/CD - Criar Tag de Release"]
+#     types:
+#        - completed
+#        - success
+
+# permissions:
+#   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+
+# jobs:
+#   update-version-json:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0  # Isso garante que você tenha o histórico completo para comparar as branches
+
+#       - name: Print remote branch for PR (from git remote show origin)
+#         run: |
+#           # Obtém o nome da branch de origem do PR (head_ref)
+#           PR_BRANCH="${{ github.head_ref }}"
+          
+#           # Exibe as informações do repositório remoto
+#           echo "Informações sobre o repositório remoto (git remote show origin):"
+#           git remote show origin
+
+#           # Filtra o nome da branch de origem do PR
+#           echo "Branch de origem do PR (exemplo 'estudo_versoes')"
+#           git remote show origin | grep -oP '.*\s*pushes\s*to\s*\K\w+' | grep "$PR_BRANCH"
+
+name: Executar JAR no Repositório
 
 on:
-  workflow_run:
-    workflows: ["CI/CD - Criar Tag de Release"]
-    types:
-       - completed
-       - success
+  push:
+    branches:
+      - main
+      - develop  # ou outras branches que você deseja monitorar para executar o JAR
 
 permissions:
-  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+  contents: read  # Permite ao GITHUB_TOKEN acessar o conteúdo do repositório
 
 jobs:
-  update-version-json:
+  run-jar:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out Git repository
+      - name: Check out the repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Isso garante que você tenha o histórico completo para comparar as branches
+          fetch-depth: 0  # Garantir que você tem o histórico completo, se necessário
 
-      - name: Print remote branch for PR (from git remote show origin)
+      - name: Instalar Java
         run: |
-          # Obtém o nome da branch de origem do PR (head_ref)
-          PR_BRANCH="${{ github.head_ref }}"
-          
-          # Exibe as informações do repositório remoto
-          echo "Informações sobre o repositório remoto (git remote show origin):"
-          git remote show origin
+          sudo apt-get update
+          sudo apt-get install openjdk-11-jdk -y  # ou qualquer versão necessária
 
-          # Filtra o nome da branch de origem do PR
-          echo "Branch de origem do PR (exemplo 'estudo_versoes')"
-          git remote show origin | grep -oP '.*\s*pushes\s*to\s*\K\w+' | grep "$PR_BRANCH"
+      - name: Verificar a instalação do Java
+        run: |
+          java -version
+
+      - name: Executar JAR
+        run: |
+          # Caminho para o arquivo JAR
+          JAR_PATH="winthor-smart-hub-layouts/version-control/version-control-layouts.jar" 
+          
+          # Verifica se o arquivo JAR existe antes de tentar executá-lo
+          if [ -f "$JAR_PATH" ]; then
+            echo "Iniciando a execução do JAR..."
+            java -jar $JAR_PATH main estudo_versoes
+          else
+            echo "Arquivo JAR não encontrado em $JAR_PATH"
+            exit 1
+          fi
+
+
+
+
