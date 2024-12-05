@@ -34,10 +34,11 @@ jobs:
           # Exibe a branch remota (origin) e compara com a branch local
           echo "Branch remota (origin):"
           git branch -v
-          # Compare as branches para ver as diferenças
-          echo "Comparando branch local com branch remota:"
-          git fetch origin  # Certifica-se de que as informações remotas estão atualizadas
-          git diff origin/${{ github.head_ref }}..HEAD  # Compara a branch local com a remota
+          # Garantir que as referências remotas estejam atualizadas
+          git fetch origin
+          # Comparar a branch remota (origin/${{ github.head_ref }}) com a branch local
+          echo "Comparando a branch local com a branch remota:"
+          git diff origin/${{ github.head_ref }}..HEAD  # Compara a branch remota com a branch local
 
       - name: Atualizar version.json nas pastas modificadas
         run: |
