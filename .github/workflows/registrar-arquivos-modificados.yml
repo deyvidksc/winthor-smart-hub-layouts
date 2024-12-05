@@ -43,9 +43,4 @@ jobs:
             git add modified_files.txt
             git commit -m "Adicionando lista de arquivos modificados no PR"
           fi
-
-      - name: Push do arquivo atualizado para a branch de origem
-        run: |
-          # Realiza o push para a branch de origem do PR          
-          #git push origin ${{ github.ref }} 
-          git push -u origin main
+          git push origin ${{ github.ref }}
