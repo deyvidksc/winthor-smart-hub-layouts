@@ -65,17 +65,9 @@ jobs:
       - name: Executar JAR
         run: |
           # Caminho para o arquivo JAR
-          JAR_PATH="/version-control/version-control-layouts.jar" 
+             java -jar version-control/version-control-layouts.jar main estudo_versoes ${{ secrets.GITHUB_TOKEN }}
           
-          # Verifica se o arquivo JAR existe antes de tentar executá-lo
-          if [ -f "$JAR_PATH" ]; then
-            echo "Iniciando a execução do JAR..."
-            java -jar $JAR_PATH main estudo_versoes
-          else
-            echo "Arquivo JAR não encontrado em $JAR_PATH"
-            exit 1
-          fi
-
+ 
 
 
 
