@@ -25,11 +25,14 @@ jobs:
         run: |
           # Listando arquivos modificados na última commit
           modified_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          
+
           # Extraindo as pastas
           modified_folders=$(echo "$modified_files" | grep -o '^[^/]\+' | sort | uniq)
           
-          # Criando o arquivo com a lista de pastas
+          # Deletar o arquivo 'modified_folders.txt' caso já exista
+          rm -f modified_folders.txt
+          
+          # Criando o arquivo novamente com a lista de pastas
           echo "$modified_folders" > modified_folders.txt
 
       - name: Commit modified folders
@@ -47,136 +50,6 @@ jobs:
             git config --global credential.helper 'cache --timeout=3600'
             echo "https://${{ secrets.GH_TOKEN }}:@github.com" > ~/.git-credentials
 
-            # Fazer pull da branch remota antes de push
-            git pull origin ${{ github.base_ref }} --rebase
-
             # Empurrar para a branch correta
             git push https://github.com/${{ github.repository }} HEAD:${{ github.base_ref }}
           fi
-
-
-          
-     # - name: Gerar Release
-     #   uses: rymndhng/release-on-push-action@master
-     #   with:
-     #     use_github_release_notes: true
-     #     tag_prefix: ""  
-     #     release_name: ${{ env.NEW_VERSION }}
-
-
-# name: Track Modified Folders
-
-# on:
-#   push:
-#     branches:
-#       - main # ou qualquer outra branch que você queira monitorar
-#   pull_request:
-#     branches:
-#       - main # ou qualquer outra branch que você queira monitorar
-
-# jobs:
-#   track-modified-folders:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v3
-
-#       - name: Get list of modified files
-#         id: get_modified_files
-#         run: |
-#           # Listando arquivos modificados na última commit
-#           modified_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          
-#           # Extraindo as pastas
-#           modified_folders=$(echo "$modified_files" | grep -o '^[^/]\+' | sort | uniq)
-          
-#           # Criando o arquivo com a lista de pastas
-#           echo "$modified_folders" > modified_folders.txt
-
-#       - name: Commit modified folders
-#         run: |
-#           # Verificar se o arquivo foi alterado
-#           if [ -f modified_folders.txt ]; then
-#             git config --global user.name 'GitHub Actions'
-#             git config --global user.email 'actions@github.com'
-#             git add modified_folders.txt
-#             git commit -m "Atualizar lista de pastas modificadas"
-
-#             # Autenticação com o token GH_TOKEN
-#             git config --global credential.helper 'cache --timeout=3600'
-#             echo "https://${{ secrets.GH_TOKEN }}:@github.com" > ~/.git-credentials
-
-#             # Empurrar para a branch correta
-#             if [[ $GITHUB_REF == refs/pull/* ]]; then
-#               # Para pull requests, empurre para a ref específica do PR
-#               git push https://github.com/${{ github.repository }} HEAD:refs/pull/${{ github.event.pull_request.number }}/merge
-#             else
-#               # Para commits diretos, empurre para a branch principal ou branch de destino
-#               git push https://github.com/${{ github.repository }} HEAD:${{ github.ref }}
-#             fi
-#           fi
-
-
-# name: "CI/CD - Registrar Arquivos Modificados"
-
-# on:
-#   pull_request:
-#     branches:
-#       - main  # Ou qualquer branch que deseja monitorar para o merge
-
-# permissions:
-#   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
-
-# jobs:
-#   track-modified-files:
-#     runs-on: ubuntu-latest
-#     env:
-#       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
-#     steps:
-#       - name: Check out Git repository
-#         uses: actions/checkout@v3
-#         with:
-#           fetch-depth: 0  # Isso garante que você tenha o histórico completo para comparar as branches
-
-#       - name: Obter arquivos modificados
-#         run: |
-#           # Registra os arquivos modificados na branch de origem (pr)
-#           git diff --name-only origin/main...HEAD > modified_files.txt
-
-#           # Se você deseja ver esses arquivos modificados no log de execução
-#           echo "Arquivos modificados no PR:"
-#           cat modified_files.txt
-          
-#       - name: Verificar e atualizar o arquivo 'modified_files.txt'
-#         run: |
-#           # Verifica se o arquivo 'modified_files.txt' já existe
-#           git config --global user.name "GitHub Actions"
-#           git config --global user.email "actions@github.com"
-          
-#           if [ -f "modified_files.txt" ]; then
-#             # Se o arquivo já existe, apenas adiciona e faz um novo commit
-#             git add modified_files.txt
-#             git commit -m "Atualizando lista de arquivos modificados no PR"
-#           else
-#             # Caso contrário, cria um novo arquivo e faz o commit
-#             git add modified_files.txt
-#             git commit -m "Adicionando lista de arquivos modificados no PR"
-#           fi
-          
-#       - name: Push do arquivo atualizado para o trunk (main ou develop)
-#         run: |
-#           # Determina a branch trunk automaticamente
-#           TRUNK_BRANCH="main"  # Default para 'main', mas pode ser 'develop' conforme seu fluxo
-      
-#           # Verifica se a branch base do PR é 'develop', ajustando a variável TRUNK_BRANCH
-#           if [[ "${{ github.base_ref }}" == "develop" ]]; then
-#             TRUNK_BRANCH="develop"
-#           fi
-      
-#           # Empurra para a branch 'trunk' (main ou develop)
-#           git push origin $TRUNK_BRANCH --force-with-lease
-
-
-
-
