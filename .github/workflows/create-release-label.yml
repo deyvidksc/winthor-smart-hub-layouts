@@ -6,9 +6,9 @@ on:
     types:
        - completed
        - success
-  pull_request:
-    types:
-      - closed
+  #pull_request:
+   # types:
+    #  - closed
     branches:
       - main
       - develop
