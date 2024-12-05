@@ -43,4 +43,17 @@ jobs:
             git add modified_files.txt
             git commit -m "Adicionando lista de arquivos modificados no PR"
           fi
-          git push origin ${{ github.ref }} --force
+          
+      - name: Push do arquivo atualizado para o trunk (main ou develop)
+        run: |
+          # Determina a branch trunk automaticamente
+          TRUNK_BRANCH="main"  # Default para 'main', mas pode ser 'develop' conforme seu fluxo
+      
+          # Verifica se a branch base do PR é 'develop', ajustando a variável TRUNK_BRANCH
+          if [[ "${{ github.base_ref }}" == "develop" ]]; then
+            TRUNK_BRANCH="develop"
+          fi
+      
+          # Empurra para a branch 'trunk' (main ou develop)
+          git push origin $TRUNK_BRANCH --force-with-lease
+
