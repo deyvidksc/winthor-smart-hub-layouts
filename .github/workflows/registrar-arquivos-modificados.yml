@@ -50,6 +50,10 @@ jobs:
             git config --global credential.helper 'cache --timeout=3600'
             echo "https://${{ secrets.GH_TOKEN }}:@github.com" > ~/.git-credentials
 
+            # Realizar o 'git pull' antes de fazer o 'git push' para garantir que as mudanças remotas sejam integradas
+            git pull origin ${{ github.base_ref }} --rebase
+
             # Empurrar para a branch correta
             git push https://github.com/${{ github.repository }} HEAD:${{ github.base_ref }}
           fi
+
