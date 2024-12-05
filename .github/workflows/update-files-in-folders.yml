@@ -22,6 +22,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Print local (trunk) branch
+        run: |
+          # Exibe a branch local (trunk)
+          echo "Branch local (trunk): $(git rev-parse --abbrev-ref HEAD)"
+
+      - name: Print remote (origin) branch
+        run: |
+          # Exibe a branch remota origin
+          echo "Branch remota (origin):"
+          git branch -r        
+
       - name: Carregar a versão atual
         run: |
           # A versão será passada como variável de ambiente do workflow anterior
