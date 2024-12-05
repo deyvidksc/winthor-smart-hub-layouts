@@ -1,3 +1,47 @@
+name: Track Modified Folders
+
+on:
+  push:
+    branches:
+      - main # ou qualquer outra branch que você queira monitorar
+  pull_request:
+    branches:
+      - main # ou qualquer outra branch que você queira monitorar
+
+jobs:
+  track-modified-folders:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get list of modified files
+        id: get_modified_files
+        run: |
+          # Listando arquivos modificados na última commit
+          modified_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          
+          # Extraindo as pastas
+          modified_folders=$(echo "$modified_files" | grep -o '^[^/]\+' | sort | uniq)
+          
+          # Criando o arquivo com a lista de pastas
+          echo "$modified_folders" > modified_folders.txt
+
+      - name: Commit modified folders
+        run: |
+          # Verificar se o arquivo foi alterado
+          if [ -f modified_folders.txt ]; then
+            git config --global user.name 'GitHub Actions'
+            git config --global user.email 'actions@github.com'
+            git add modified_folders.txt
+            git commit -m "Atualizar lista de pastas modificadas"
+            git push origin ${{ github.ref }}
+          fi
+
+
+
+
 # name: "CI/CD - Registrar Arquivos Modificados"
 
 # on:
@@ -56,4 +100,7 @@
       
 #           # Empurra para a branch 'trunk' (main ou develop)
 #           git push origin $TRUNK_BRANCH --force-with-lease
+
+
+
 
