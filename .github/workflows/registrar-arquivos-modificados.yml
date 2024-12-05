@@ -1,59 +1,59 @@
-name: "CI/CD - Registrar Arquivos Modificados"
+# name: "CI/CD - Registrar Arquivos Modificados"
 
-on:
-  pull_request:
-    branches:
-      - main  # Ou qualquer branch que deseja monitorar para o merge
+# on:
+#   pull_request:
+#     branches:
+#       - main  # Ou qualquer branch que deseja monitorar para o merge
 
-permissions:
-  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+# permissions:
+#   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
 
-jobs:
-  track-modified-files:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Isso garante que você tenha o histórico completo para comparar as branches
+# jobs:
+#   track-modified-files:
+#     runs-on: ubuntu-latest
+#     env:
+#       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
+#     steps:
+#       - name: Check out Git repository
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0  # Isso garante que você tenha o histórico completo para comparar as branches
 
-      - name: Obter arquivos modificados
-        run: |
-          # Registra os arquivos modificados na branch de origem (pr)
-          git diff --name-only origin/main...HEAD > modified_files.txt
+#       - name: Obter arquivos modificados
+#         run: |
+#           # Registra os arquivos modificados na branch de origem (pr)
+#           git diff --name-only origin/main...HEAD > modified_files.txt
 
-          # Se você deseja ver esses arquivos modificados no log de execução
-          echo "Arquivos modificados no PR:"
-          cat modified_files.txt
+#           # Se você deseja ver esses arquivos modificados no log de execução
+#           echo "Arquivos modificados no PR:"
+#           cat modified_files.txt
           
-      - name: Verificar e atualizar o arquivo 'modified_files.txt'
-        run: |
-          # Verifica se o arquivo 'modified_files.txt' já existe
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+#       - name: Verificar e atualizar o arquivo 'modified_files.txt'
+#         run: |
+#           # Verifica se o arquivo 'modified_files.txt' já existe
+#           git config --global user.name "GitHub Actions"
+#           git config --global user.email "actions@github.com"
           
-          if [ -f "modified_files.txt" ]; then
-            # Se o arquivo já existe, apenas adiciona e faz um novo commit
-            git add modified_files.txt
-            git commit -m "Atualizando lista de arquivos modificados no PR"
-          else
-            # Caso contrário, cria um novo arquivo e faz o commit
-            git add modified_files.txt
-            git commit -m "Adicionando lista de arquivos modificados no PR"
-          fi
+#           if [ -f "modified_files.txt" ]; then
+#             # Se o arquivo já existe, apenas adiciona e faz um novo commit
+#             git add modified_files.txt
+#             git commit -m "Atualizando lista de arquivos modificados no PR"
+#           else
+#             # Caso contrário, cria um novo arquivo e faz o commit
+#             git add modified_files.txt
+#             git commit -m "Adicionando lista de arquivos modificados no PR"
+#           fi
           
-      - name: Push do arquivo atualizado para o trunk (main ou develop)
-        run: |
-          # Determina a branch trunk automaticamente
-          TRUNK_BRANCH="main"  # Default para 'main', mas pode ser 'develop' conforme seu fluxo
+#       - name: Push do arquivo atualizado para o trunk (main ou develop)
+#         run: |
+#           # Determina a branch trunk automaticamente
+#           TRUNK_BRANCH="main"  # Default para 'main', mas pode ser 'develop' conforme seu fluxo
       
-          # Verifica se a branch base do PR é 'develop', ajustando a variável TRUNK_BRANCH
-          if [[ "${{ github.base_ref }}" == "develop" ]]; then
-            TRUNK_BRANCH="develop"
-          fi
+#           # Verifica se a branch base do PR é 'develop', ajustando a variável TRUNK_BRANCH
+#           if [[ "${{ github.base_ref }}" == "develop" ]]; then
+#             TRUNK_BRANCH="develop"
+#           fi
       
-          # Empurra para a branch 'trunk' (main ou develop)
-          git push origin $TRUNK_BRANCH --force-with-lease
+#           # Empurra para a branch 'trunk' (main ou develop)
+#           git push origin $TRUNK_BRANCH --force-with-lease
 
