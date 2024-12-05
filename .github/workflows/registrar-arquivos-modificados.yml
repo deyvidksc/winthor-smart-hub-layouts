@@ -37,13 +37,17 @@ jobs:
             git add modified_folders.txt
             git commit -m "Atualizar lista de pastas modificadas"
 
+            # Autenticação com o token GH_TOKEN
+            git config --global credential.helper 'cache --timeout=3600'
+            echo "https://${{ secrets.GH_TOKEN }}:@github.com" > ~/.git-credentials
+
             # Empurrar para a branch correta
             if [[ $GITHUB_REF == refs/pull/* ]]; then
               # Para pull requests, empurre para a ref específica do PR
-              git push origin HEAD:refs/pull/${{ github.event.pull_request.number }}/merge
+              git push https://github.com/${{ github.repository }} HEAD:refs/pull/${{ github.event.pull_request.number }}/merge
             else
               # Para commits diretos, empurre para a branch principal ou branch de destino
-              git push origin ${{ github.ref }}
+              git push https://github.com/${{ github.repository }} HEAD:${{ github.ref }}
             fi
           fi
 
