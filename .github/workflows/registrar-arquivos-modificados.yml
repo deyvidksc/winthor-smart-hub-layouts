@@ -25,7 +25,7 @@ jobs:
   
       - name: Get list of modified files
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         id: get_modified_files
         run: |
           # Listando arquivos modificados na última commit
@@ -39,7 +39,7 @@ jobs:
 
       - name: Commit modified folders
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Verificar se o arquivo foi alterado
           if [ -f modified_folders.txt ]; then
