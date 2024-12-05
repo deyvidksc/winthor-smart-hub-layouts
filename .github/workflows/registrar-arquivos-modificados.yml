@@ -28,11 +28,15 @@ jobs:
           echo "Arquivos modificados no PR:"
           cat modified_files.txt
 
+      - name: Configurar identidade do Git
+        run: |
+          # Configura o nome e o email do usuário para o Git
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
       - name: Gravar arquivos modificados no repositório
         run: |
           # Adiciona o arquivo que contém a lista de arquivos modificados
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
           git add modified_files.txt
           git commit -m "Adicionando lista de arquivos modificados no PR"         
 
