@@ -31,12 +31,13 @@ jobs:
       - name: Print branch of the PR (origin branch)
         run: |
           # Exibe a branch de origem do PR (head_ref)
-          echo "Branch de origem do PR (origin): ${{ github.head_ref }}"
-
-      - name: Print branch base of the PR (target branch)
+            echo "Branch de origem do PR (origin): ${{ github.head_ref }}"
+            
+      - name: Print remote (origin) branch
         run: |
-          # Exibe a branch de destino do PR (base_ref)
-          echo "Branch de destino do PR (base): ${{ github.base_ref }}"          
+          # Exibe a branch remota origin
+          echo "Branch remota (origin):"
+          git branch -v
 
       - name: Carregar a versão atual
         run: |
