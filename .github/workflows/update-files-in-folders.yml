@@ -32,7 +32,7 @@
 #           echo "Branch de origem do PR (exemplo 'estudo_versoes')"
 #           git remote show origin | grep -oP '.*\s*pushes\s*to\s*\K\w+' | grep "$PR_BRANCH"
 
-name: Executar JAR no Repositório
+name: "CI/CD - Atualizar Version.json"
 
 on:
   push:
