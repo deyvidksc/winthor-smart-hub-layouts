@@ -1,14 +1,14 @@
 name: CI/CD - Criar Tag de Release
 
 on:
-  workflow_run:
-    workflows: ["CI/CD - Registrar Arquivos Modificados"]
+  #workflow_run:
+   # workflows: ["CI/CD - Registrar Arquivos Modificados"]
+    #types:
+     #  - completed
+      # - success
+  pull_request:
     types:
-       - completed
-       - success
-  #pull_request:
-   # types:
-    #  - closed
+      - closed
     branches:
       - main
       - develop
