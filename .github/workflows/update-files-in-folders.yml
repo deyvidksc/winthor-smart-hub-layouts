@@ -23,56 +23,18 @@ jobs:
         run: |
           # Exibe a branch local (trunk)
           echo "Branch local (trunk): $(git rev-parse --abbrev-ref HEAD)"
-
-      - name: Print branch of the PR (origin branch)
+ 
+      - name: Print remote branches (origin)
         run: |
-          # Exibe a branch de origem do PR (head_ref)
-          echo "Branch de origem do PR (origin): ${{ github.head_ref }}"
+          # Exibe todas as branches remotas (origin)
+          echo "Branches remotas (origin):"
+          git branch -r
 
-      - name: Print remote (origin) branch and compare with local branch
+      - name: Print remote (origin) branch for current branch
         run: |
-          # Exibe a branch remota (origin) e compara com a branch local
-          echo "Branch remota (origin):"
-          git branch -v
-          # Garantir que as referências remotas estejam atualizadas
-          git fetch origin
-          # Comparar a branch remota (origin/${{ github.head_ref }}) com a branch local
-          echo "Comparando a branch local com a branch remota:"
-          git diff origin/${{ github.head_ref }}..HEAD  # Compara a branch remota com a branch local
+          # Exibe a branch remota associada à branch local atual
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          echo "Branch remota (origin) associada à branch local ($CURRENT_BRANCH):"
+          git rev-parse --abbrev-ref origin/$CURRENT_BRANCH
 
-      - name: Atualizar version.json nas pastas modificadas
-        run: |
-          NEW_VERSION="${{ env.NEW_VERSION }}"
-          MODIFIED_FOLDERS="${{ env.MODIFIED_FOLDERS }}"
-
-          for folder in $MODIFIED_FOLDERS; do
-            # Ignorar pastas não desejadas
-            if [[ "$folder" == ".github" || "$folder" == "version-control" ]]; then
-              continue
-            fi
-
-            # Verificar se existe o arquivo version.json dentro da pasta
-            VERSION_JSON_PATH="$folder/version.json"
-            if [[ -f "$VERSION_JSON_PATH" ]]; then
-              echo "Atualizando $VERSION_JSON_PATH com a versão $NEW_VERSION"
-              # Atualizar a versão dentro do version.json
-              jq ".versao = \"$NEW_VERSION\"" $VERSION_JSON_PATH > temp_version.json && mv temp_version.json $VERSION_JSON_PATH
-              git add $VERSION_JSON_PATH
-            else
-              echo "Arquivo version.json não encontrado em $folder"
-            fi
-          done
-
-      - name: Commit e Push das alterações no version.json
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          
-          # Fazer pull para integrar as mudanças do repositório remoto
-          git pull origin ${{ github.ref }} --rebase
-
-          # Verifica se há alterações para commitar
-          git diff --exit-code || git commit -m "Atualizando version.json para versão ${{ env.NEW_VERSION }}"
-
-          # Push se houver alterações com o GITHUB_TOKEN
-          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} ${{ github.ref }} || echo "Nenhuma alteração para push"
+      
