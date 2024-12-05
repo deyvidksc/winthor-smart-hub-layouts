@@ -65,7 +65,7 @@ jobs:
       - name: Executar JAR
         run: |
           # Caminho para o arquivo JAR
-          JAR_PATH="winthor-smart-hub-layouts/version-control/version-control-layouts.jar" 
+          JAR_PATH="/version-control/version-control-layouts.jar" 
           
           # Verifica se o arquivo JAR existe antes de tentar executá-lo
           if [ -f "$JAR_PATH" ]; then
