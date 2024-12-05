@@ -2,6 +2,9 @@ name: "CI/CD - Atualizar Version.json"
 
 on:
   workflow_run:
+    branches:
+      - main
+      - develop
     workflows: ["CI/CD - Criar Tag de Release"]
     types:
        - completed
@@ -32,47 +35,27 @@ jobs:
           git status
           git log --oneline --decorate -n 5
 
-      - name: Buscar arquivos modificados entre o PR e o main
-        id: modified_files
+      - name: Obter arquivos modificados
         run: |
-          # Nome do branch do PR
-          PR_BRANCH="${{ github.event.workflow_run.head_ref }}"
-          
-          # Atualiza o branch main com as últimas alterações remotas
-          git fetch origin main  # Atualiza o main local com o remoto
+          # Lista todos os arquivos modificados
+          git diff --name-only ${{ github.event.workflow_run.head_commit }} | sort > changed_files.txt
+          cat changed_files.txt  # Para depuração
 
-          # Verifica as alterações entre o branch do PR e o branch main
-          git diff --name-only origin/main...$PR_BRANCH > changed_files.txt
-          
-          # Debug: Exibe os arquivos modificados
-          echo "Arquivos modificados entre o PR e main:"
-          cat changed_files.txt
-          
-          # Confirma se a comparação encontrou algo
-          if [ ! -s changed_files.txt ]; then
-            echo "Nenhum arquivo modificado encontrado entre o PR e o main."
-            exit 1  # Falha o workflow se não houver alterações
-          fi
-
-      - name: Imprimir pastas modificadas
+      - name: Extrair as pastas modificadas
         run: |
-          # A versão obtida do workflow anterior será utilizada para atualizar o version.json
-          NEW_VERSION="${{ env.NEW_VERSION }}"
-          MODIFIED_FOLDERS=$(grep -oP '^[^/]+(?=/)' changed_files.txt | sort -u)
-
-          # Imprimir as pastas modificadas
-          echo "Pastas modificadas:"
-          echo "$MODIFIED_FOLDERS"
+          # Extrai as pastas a partir dos arquivos modificados
+          MODIFIED_FOLDERS=$(awk -F/ '{print $1}' changed_files.txt | sort -u)
+          echo "Pastas modificadas: $MODIFIED_FOLDERS"
+          echo "MODIFIED_FOLDERS=$MODIFIED_FOLDERS" >> $GITHUB_ENV
 
       - name: Atualizar version.json nas pastas modificadas
         run: |
-          # A versão obtida do workflow anterior será utilizada para atualizar o version.json
           NEW_VERSION="${{ env.NEW_VERSION }}"
-          MODIFIED_FOLDERS=$(grep -oP '^[^/]+(?=/)' changed_files.txt | sort -u)
+          MODIFIED_FOLDERS="${{ env.MODIFIED_FOLDERS }}"
 
           for folder in $MODIFIED_FOLDERS; do
             # Ignorar as pastas não desejadas
-            if [[ "$folder" == ".github" || "$folder" == "version-control" || "$folder" == ".github" ]]; then
+            if [[ "$folder" == ".github" || "$folder" == "version-control" ]]; then
               continue
             fi
 
