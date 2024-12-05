@@ -32,6 +32,7 @@
 #           echo "Branch de origem do PR (exemplo 'estudo_versoes')"
 #           git remote show origin | grep -oP '.*\s*pushes\s*to\s*\K\w+' | grep "$PR_BRANCH"
 
+
 name: "CI/CD - Atualizar Version.json"
 
 on:
@@ -62,12 +63,26 @@ jobs:
         run: |
           java -version
 
-      - name: Executar JAR
+      - name: Obter o nome da branch trunk
+        id: get_branch_trunk
+        run: |
+          # Pega o nome da branch atual (geralmente main ou develop)
+          BRANCH_TRUNK=$(git rev-parse --abbrev-ref HEAD)
+          echo "Branch trunk: $BRANCH_TRUNK"
+          echo "BRANCH_TRUNK=$BRANCH_TRUNK" >> $GITHUB_ENV
+
+      - name: Obter o nome da branch remota (origin)
+        id: get_branch_origin
+        run: |
+          # Pega o nome da branch remota que está sendo usada no PR
+          BRANCH_ORIGIN=${GITHUB_REF#refs/heads/}
+          echo "Branch origin: $BRANCH_ORIGIN"
+          echo "BRANCH_ORIGIN=$BRANCH_ORIGIN" >> $GITHUB_ENV
+
+      - name: Executar JAR com parâmetros
         run: |
           # Caminho para o arquivo JAR
-             java -jar version-control/version-control-layouts.jar main estudo_versoes ${{ secrets.GITHUB_TOKEN }}
-          
+          echo "Executando JAR com os parâmetros: Branch Trunk=${{ env.BRANCH_TRUNK }}, Branch Origin=${{ env.BRANCH_ORIGIN }}, Token=${{ secrets.GITHUB_TOKEN }}"
+          java -jar version-control/version-control-layouts.jar ${{ env.BRANCH_TRUNK }} ${{ env.BRANCH_ORIGIN }} ${{ secrets.GITHUB_TOKEN }}
+
  
-
-
-
