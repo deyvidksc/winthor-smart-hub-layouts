@@ -46,5 +46,5 @@ jobs:
 
       - name: Push do arquivo atualizado para a branch de origem
         run: |
-          # Realiza o push para a branch de origem do PR
-          git push origin ${{ github.head_ref }} --force-with-lease
+          # Realiza o push para a branch de origem do PR          
+          git push origin ${{ github.ref }} 
