@@ -19,20 +19,15 @@ jobs:
         with:
           fetch-depth: 0  # Isso garante que você tenha o histórico completo para comparar as branches
 
-      - name: Print local (trunk) branch
+      - name: Print remote branch for PR (from git remote show origin)
         run: |
-          # Exibe a branch local (trunk)
-          echo "Branch local (trunk): $(git rev-parse --abbrev-ref HEAD)"
+          # Obtém o nome da branch de origem do PR (head_ref)
+          PR_BRANCH="${{ github.head_ref }}"
+          
+          # Exibe as informações do repositório remoto
+          echo "Informações sobre o repositório remoto (git remote show origin):"
+          git remote show origin
 
-      - name: Print remote branches (origin)
-        run: |
-          # Exibe todas as branches remotas (origin)
-          echo "Branches remotas (origin):"
-          git branch -v
-
-      - name: Print remote (origin) branch for current branch
-        run: |
-          # Exibe a branch remota associada à branch local atual
-          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          echo "Branch remota (origin) associada à branch local ($CURRENT_BRANCH):"
-          git rev-parse --abbrev-ref origin/$CURRENT_BRANCH
+          # Filtra o nome da branch de origem do PR
+          echo "Branch de origem do PR (exemplo 'estudo_versoes')"
+          git remote show origin | grep -oP '.*\s*pushes\s*to\s*\K\w+' | grep "$PR_BRANCH"
