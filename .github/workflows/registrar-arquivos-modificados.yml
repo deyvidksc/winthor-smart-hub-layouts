@@ -11,7 +11,8 @@ permissions:
 jobs:
   track-modified-files:
     runs-on: ubuntu-latest
-
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
@@ -30,8 +31,10 @@ jobs:
       - name: Gravar arquivos modificados no repositório
         run: |
           # Adiciona o arquivo que contém a lista de arquivos modificados
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           git add modified_files.txt
-          git commit -m "Adicionando lista de arquivos modificados no PR"
+          git commit -m "Adicionando lista de arquivos modificados no PR"         
 
       - name: Push do arquivo modificado
         run: |
