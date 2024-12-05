@@ -30,7 +30,7 @@ jobs:
           
       - name: Verificar se o arquivo 'modified_files.txt' já existe e atualizar
         run: |
-          if [ -f modified_files.txt ]; then
+          if [ -f "modified_files.txt" ]; then
             # Se o arquivo já existe, apenas atualiza
             git add modified_files.txt
             git commit --amend --no-edit -m "Atualizando lista de arquivos modificados no PR"
