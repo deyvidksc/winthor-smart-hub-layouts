@@ -28,7 +28,7 @@ jobs:
           echo "Arquivos modificados no PR:"
           cat modified_files.txt
 
-      - name: Configurar identidade do Git
+      - name: Configurar identidade do Git apenas para o commit
         run: |
           # Configura o nome e o email do usuário para o Git
           git config user.name "GitHub Actions"
@@ -38,9 +38,9 @@ jobs:
         run: |
           # Adiciona o arquivo que contém a lista de arquivos modificados
           git add modified_files.txt
-          git commit -m "Adicionando lista de arquivos modificados no PR"         
+          git commit -m "Adicionando lista de arquivos modificados no PR" 
 
       - name: Push do arquivo modificado
         run: |
           # Realiza o push do arquivo modificado para o repositório
-          git push origin HEAD
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD
