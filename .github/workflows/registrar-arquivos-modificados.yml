@@ -47,4 +47,5 @@ jobs:
       - name: Push do arquivo atualizado para a branch de origem
         run: |
           # Realiza o push para a branch de origem do PR          
-          git push origin ${{ github.ref }} 
+          #git push origin ${{ github.ref }} 
+          git push -u origin main
