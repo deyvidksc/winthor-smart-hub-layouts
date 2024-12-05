@@ -26,12 +26,12 @@
 
 name: Validate JSON
 
-#on: [push]
-on:
-  pull_request:
-    branches:
-      - main  # Ou a branch que você deseja monitorar para o PR
-      - develop
+on: [push]
+#on:
+ # pull_request:
+  #  branches:
+   #   - main  # Ou a branch que você deseja monitorar para o PR
+    #  - develop
 
 jobs:
   validate-json:
