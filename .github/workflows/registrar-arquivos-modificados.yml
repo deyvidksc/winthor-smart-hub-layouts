@@ -1,12 +1,7 @@
 name: CI/CD - Registrar Arquivos Modificados
 
 on:
-  #workflow_run:
-   # workflows: ["CI/CD - Registrar Arquivos Modificados"]
-    #types:
-     #  - completed
-      # - success
-  pull_request: 
+  pull_request:
     branches:
       - main
       - develop
@@ -22,7 +17,7 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
-  
+
       - name: Get list of modified files
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -52,15 +47,13 @@ jobs:
             git config --global credential.helper 'cache --timeout=3600'
             echo "https://${{ secrets.GH_TOKEN }}:@github.com" > ~/.git-credentials
 
+            # Determinar a branch base do PR
+            BRANCH_TO_PUSH="${{ github.base_ref }}"
+
             # Empurrar para a branch correta
-            if [[ $GITHUB_REF == refs/pull/* ]]; then
-              # Para pull requests, empurre para a ref específica do PR
-              git push https://github.com/${{ github.repository }} HEAD:refs/pull/${{ github.event.pull_request.number }}/merge
-            else
-              # Para commits diretos, empurre para a branch principal ou branch de destino
-              git push https://github.com/${{ github.repository }} HEAD:${{ github.ref }}
-            fi
+            git push https://github.com/${{ github.repository }} HEAD:$BRANCH_TO_PUSH
           fi
+
           
      # - name: Gerar Release
      #   uses: rymndhng/release-on-push-action@master
