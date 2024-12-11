@@ -1,4 +1,4 @@
-name: Capturar branch de origem do PR
+name: Capturar nome da branch de origem do PR
 
 on:
   pull_request:
@@ -9,20 +9,14 @@ on:
     branches:
       - 'main'
 
-permissions:
-  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
-
 jobs:
-  update-version:
+  capture-branch:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
     steps:
-      # Passo 1: Fazer o checkout do repositório
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # Passo 2: Capturar o nome da branch de origem do PR
+      # Passo 1: Capturar o nome da branch de origem do PR
       - name: Capturar nome da branch de origem do PR
         id: get-pr-branch
         run: |
@@ -30,34 +24,11 @@ jobs:
           PR_BRANCH="${{ github.head_ref }}"
           echo "Branch de origem do PR: $PR_BRANCH"
           
-          # Salvar o nome da branch em um arquivo dentro da pasta .github/
-          echo $PR_BRANCH > .github/branch-name.txt
+          # Definir a variável de ambiente 'NAME_BRANCH_ORIGIN' para o nome da branch
+          echo "NAME_BRANCH_ORIGIN=$PR_BRANCH" >> $GITHUB_ENV
 
-      # Passo 3: Configurar o Git e garantir que a branch main esteja atualizada
-      - name: Configurar Git e garantir que a branch main esteja atualizada
+      # Passo 2: Verificar se a variável foi definida corretamente
+      - name: Verificar valor da variável de ambiente
         run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
-          
-          # Adicionar o remote 'origin' se necessário
-          git remote add origin https://github.com/deyvidksc/winthor-smart-hub-layouts.git || echo "Remote 'origin' já existe"
-          
-          # Atualizar a branch 'main' local com a versão remota
-          git fetch origin
-          git checkout main
-          git pull origin main
-
-      # Passo 4: Commitar e fazer o push do arquivo atualizado
-      - name: Commit e push do arquivo com o nome da branch
-        run: |
-          # Adicionar o arquivo alterado
-          git add .github/branch-name.txt
-
-          # Commitar as mudanças
-          git commit -m "Salvar o nome da branch de origem do PR em .github/branch-name.txt"
-
-          # Garantir que a branch remota 'main' esteja sincronizada
-          git fetch origin
-          
-          # Fazer o push das mudanças para a branch 'main' remota
-          git push origin main
+          echo "O valor da variável NAME_BRANCH_ORIGIN é: $NAME_BRANCH_ORIGIN"
+         
