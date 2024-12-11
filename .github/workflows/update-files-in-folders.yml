@@ -1,4 +1,4 @@
-name: Atualizar Versão no versao.json
+ name: Atualizar Versão no versao.json
 
 on:
   push:
@@ -16,12 +16,23 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # Passo 2: Detectar quais pastas foram alteradas no branch "teste"
+      # Passo 2: Configurar Git para garantir que os branches sejam recuperados
+      - name: Set up git
+        run: |
+          # Adiciona o remote 'remote' se necessário
+          git remote add remote https://github.com/deyvidksc/winthor-smart-hub-layouts.git || echo "Remote 'remote' já existe"
+          git fetch remote
+          git checkout main
+          git pull remote main
+          git checkout teste
+          git pull remote teste
+
+      # Passo 3: Detectar quais pastas foram alteradas
       - name: Detectar pastas alteradas
         id: detect_changes
         run: |
           # Obter a lista de arquivos alterados entre main e teste
-          changed_files=$(git diff --name-only origin/main...origin/estudo_versoes)
+          changed_files=$(git diff --name-only remote/main...remote/estudo_versoes)
           echo "Arquivos alterados: $changed_files"
           
           # Detectar quais pastas foram modificadas
@@ -29,7 +40,7 @@ jobs:
           echo "Pastas alteradas: $changed_dirs"
           echo "::set-output name=changed_dirs::$changed_dirs"
 
-      # Passo 3: Atualizar a versão no versao.json de cada pasta alterada
+      # Passo 4: Atualizar versão no versao.json de cada pasta alterada
       - name: Atualizar versão no versao.json
         run: |
           # Obter as pastas alteradas a partir do passo anterior
@@ -69,13 +80,14 @@ jobs:
             esac
           done
 
-      # Passo 4: Commit e push das alterações no versao.json
+      # Passo 5: Commit e push das alterações
       - name: Commit e push das atualizações
         run: |
           # Adicionar as mudanças ao git
           git add .
           git commit -m "Atualizar versao.json nas pastas alteradas"
-          git push origin main
+          git push remote main
+
 
 
 
