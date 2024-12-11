@@ -1,0 +1,33 @@
+name: Capturar branch de origem do PR
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - 'main'
+  #  paths:
+  #    - '**/*'
+
+permissions:
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório      
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
+    steps:
+      # Passo 1: Fazer o checkout do repositório
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # Passo 2: Capturar o nome da branch de origem do PR
+      - name: Capturar nome da branch de origem do PR
+        id: get-pr-branch
+        run: |
+          # O nome da branch de origem do PR está em github.head_ref
+          echo "Branch de origem do PR: ${{ github.head_ref }}"
+          echo "::set-output name=pr_branch::${{ github.head_ref }}"
