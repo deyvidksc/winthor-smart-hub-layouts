@@ -28,6 +28,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch        
+ 
       # Passo 2: Configurar Git para garantir que os branches sejam recuperados
       - name: Set up git
         run: |
@@ -39,7 +44,7 @@ jobs:
           #git checkout estudo_versoes
           #git pull remote estudo_versoes
           # Obter o nome da branch de origem do PR
-          PR_BRANCH="${{ github.head_ref }}"          
+          PR_BRANCH="${{ steps.extract_branch.outputs.branch }}"          
           # Checkout na branch de origem do PR (aquela que foi enviada no PR)
           git checkout $PR_BRANCH
           git pull remote $PR_BRANCH
