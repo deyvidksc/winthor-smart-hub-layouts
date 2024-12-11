@@ -19,14 +19,17 @@ jobs:
 
       # Passo 2: Capturar o nome da branch de origem do PR e salvar em uma variável de ambiente
       - name: Capturar nome da branch de origem do PR
+        id: capture-branch
         run: |
-          PR_BRANCH="${{ github.head_ref }}"  # Captura o nome da branch do PR
+          # Captura o nome da branch de origem do PR
+          PR_BRANCH="${{ github.head_ref }}"
           echo "Branch de origem do PR: $PR_BRANCH"
           
-          # Definir a variável de ambiente 'NAME_BRANCH_ORIGIN'
-          echo "NAME_BRANCH_ORIGIN=$PR_BRANCH" >> $GITHUB_ENV  # Salva a variável de ambiente
+          # Salva o nome da branch em um arquivo temporário
+          echo "$PR_BRANCH" > branch-name.txt
 
-      # Passo 3: Verificar o valor da variável 'NAME_BRANCH_ORIGIN'
-      - name: Verificar valor da variável de ambiente
-        run: |
-          echo "O valor da variável NAME_BRANCH_ORIGIN é: $NAME_BRANCH_ORIGIN"
+      - name: Upload branch name as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: branch-name
+          path: branch-name.txt
