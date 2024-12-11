@@ -27,8 +27,8 @@ jobs:
           git fetch remote
           git checkout main
           git pull remote main
-          git checkout teste
-          git pull remote teste
+          git checkout estudo_versoes
+          git pull remote estudo_versoes
 
       # Passo 3: Detectar quais pastas foram alteradas
       - name: Detectar pastas alteradas
