@@ -6,10 +6,11 @@ on:
     types:
        - completed
        - success
-       
   pull_request:
-    types: 
-      - closed
+    types:
+      - opened
+      - synchronize
+      - reopened
     branches:
       - 'main'
   #  paths:
@@ -28,7 +29,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # Passo 2: Configurar Git para garantir que os branches sejam recuperados
+      # Passo 2: Capturar o nome da branch de origem do PR
+      - name: Capturar nome da branch de origem do PR
+        id: get-pr-branch
+        run: |
+          # O nome da branch de origem do PR está em github.head_ref
+          echo "Branch de origem do PR: ${{ github.head_ref }}"
+          echo "::set-output name=pr_branch::${{ github.head_ref }}"
+
+      # Passo 3: Configurar Git para garantir que os branches sejam recuperados
       - name: Set up git
         run: |
           # Adiciona o remote 'remote' se necessário
@@ -36,16 +45,16 @@ jobs:
           git fetch remote
           git checkout main
           git pull remote main
-          #git checkout estudo_versoes
-          #git pull remote estudo_versoes
-          # Obter o nome da branch de origem do PR
-          PR_BRANCH="${{ steps.extract_branch.outputs.branch }}"          
-          # Checkout na branch de origem do PR (aquela que foi enviada no PR)
-          git checkout $PR_BRANCH
-          git pull remote $PR_BRANCH
-          
 
-      # Passo 3: Detectar quais pastas foram alteradas
+          # Agora, capturamos o nome da branch de origem do PR do passo anterior
+          PR_BRANCH="${{ steps.get-pr-branch.outputs.pr_branch }}"
+          echo "Nome da branch de origem do PR: $PR_BRANCH"
+
+          # Fazer o checkout na branch de origem do PR
+          git checkout $PR_BRANCH
+          git pull remote $PR_BRANCH        
+
+       # Passo 4: Detectar quais pastas foram alteradas
       - name: Detectar pastas alteradas
         id: detect_changes
         run: |
@@ -58,7 +67,7 @@ jobs:
           echo "Pastas alteradas: $changed_dirs"
           echo "::set-output name=changed_dirs::$changed_dirs"
 
-      # Passo 4: Atualizar versão no versao.json de cada pasta alterada
+      # Passo 5: Atualizar versão no versao.json de cada pasta alterada
       - name: Atualizar versão no versao.json
         run: |
           # Obter as pastas alteradas a partir do passo anterior
@@ -98,7 +107,7 @@ jobs:
             esac
           done
 
-      # Passo 5: Commit e push das alterações
+      # Passo 6: Commit e push das alterações
       - name: Commit e push das atualizações
         run: |
           # Adicionar as mudanças ao git
