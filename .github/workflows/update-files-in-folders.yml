@@ -28,11 +28,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-        id: extract_branch        
- 
       # Passo 2: Configurar Git para garantir que os branches sejam recuperados
       - name: Set up git
         run: |
