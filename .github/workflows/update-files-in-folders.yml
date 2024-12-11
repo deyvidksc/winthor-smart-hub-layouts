@@ -1,3 +1,84 @@
+name: Atualizar Versão no versao.json
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*'
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Passo 1: Fazer o checkout do repositório
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # Passo 2: Detectar quais pastas foram alteradas no branch "teste"
+      - name: Detectar pastas alteradas
+        id: detect_changes
+        run: |
+          # Obter a lista de arquivos alterados entre main e teste
+          changed_files=$(git diff --name-only origin/main...origin/teste)
+          echo "Arquivos alterados: $changed_files"
+          
+          # Detectar quais pastas foram modificadas
+          changed_dirs=$(echo "$changed_files" | cut -d'/' -f1 | sort -u)
+          echo "Pastas alteradas: $changed_dirs"
+          echo "::set-output name=changed_dirs::$changed_dirs"
+
+      # Passo 3: Atualizar a versão no versao.json de cada pasta alterada
+      - name: Atualizar versão no versao.json
+        run: |
+          # Obter as pastas alteradas a partir do passo anterior
+          changed_dirs="${{ steps.detect_changes.outputs.changed_dirs }}"
+
+          # Loop para atualizar cada versao.json
+          for dir in $changed_dirs; do
+            case $dir in
+              "coleta-entrega")
+                # Incrementar a versão de coleta-entrega
+                jq '.versao = "1.0.0.3"' coleta-entrega/versao.json > coleta-entrega/versao.json.tmp && mv coleta-entrega/versao.json.tmp coleta-entrega/versao.json
+                echo "Versão de coleta-entrega atualizada"
+                ;;
+              "gruponc")
+                # Incrementar a versão de gruponc
+                jq '.versao = "1.0.1.0"' gruponc/versao.json > gruponc/versao.json.tmp && mv gruponc/versao.json.tmp gruponc/versao.json
+                echo "Versão de gruponc atualizada"
+                ;;
+              "iqvia")
+                # Incrementar a versão de iqvia
+                jq '.versao = "1.0.0.1"' iqvia/versao.json > iqvia/versao.json.tmp && mv iqvia/versao.json.tmp iqvia/versao.json
+                echo "Versão de iqvia atualizada"
+                ;;
+              "pdvsync")
+                # Incrementar a versão de pdvsync
+                jq '.versao = "1.0.0.3"' pdvsync/versao.json > pdvsync/versao.json.tmp && mv pdvsync/versao.json.tmp pdvsync/versao.json
+                echo "Versão de pdvsync atualizada"
+                ;;
+              "pfizer")
+                # Incrementar a versão de pfizer
+                jq '.versao = "1.0.2.0"' pfizer/versao.json > pfizer/versao.json.tmp && mv pfizer/versao.json.tmp pfizer/versao.json
+                echo "Versão de pfizer atualizada"
+                ;;
+              *)
+                echo "Pasta desconhecida: $dir"
+                ;;
+            esac
+          done
+
+      # Passo 4: Commit e push das alterações no versao.json
+      - name: Commit e push das atualizações
+        run: |
+          # Adicionar as mudanças ao git
+          git add .
+          git commit -m "Atualizar versao.json nas pastas alteradas"
+          git push origin main
+
+
+
 # name: "CI/CD - Atualizar Version.json"
 
 # on:
@@ -33,57 +114,57 @@
 #           git remote show origin | grep -oP '.*\s*pushes\s*to\s*\K\w+' | grep "$PR_BRANCH"
 
 
-name: "CI/CD - Atualizar Version.json"
+# name: "CI/CD - Atualizar Version.json"
 
-on:
-  push:
-    branches:
-      - main
-      - develop  # ou outras branches que você deseja monitorar para executar o JAR
+# on:
+#   push:
+#     branches:
+#       - main
+#       - develop  # ou outras branches que você deseja monitorar para executar o JAR
 
-permissions:
-  contents: read  # Permite ao GITHUB_TOKEN acessar o conteúdo do repositório
+# permissions:
+#   contents: read  # Permite ao GITHUB_TOKEN acessar o conteúdo do repositório
 
-jobs:
-  run-jar:
-    runs-on: ubuntu-latest
+# jobs:
+#   run-jar:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Check out the repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Garantir que você tem o histórico completo, se necessário
+#     steps:
+#       - name: Check out the repository
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0  # Garantir que você tem o histórico completo, se necessário
 
-      - name: Instalar Java
-        run: |
-          sudo apt-get update
-          sudo apt-get install openjdk-11-jdk -y  # ou qualquer versão necessária
+#       - name: Instalar Java
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install openjdk-11-jdk -y  # ou qualquer versão necessária
 
-      - name: Verificar a instalação do Java
-        run: |
-          java -version
+#       - name: Verificar a instalação do Java
+#         run: |
+#           java -version
 
-      - name: Obter o nome da branch trunk
-        id: get_branch_trunk
-        run: |
-          # Pega o nome da branch atual (geralmente main ou develop)
-          BRANCH_TRUNK=$(git rev-parse --abbrev-ref HEAD)
-          echo "Branch trunk: $BRANCH_TRUNK"
-          echo "BRANCH_TRUNK=$BRANCH_TRUNK" >> $GITHUB_ENV
+#       - name: Obter o nome da branch trunk
+#         id: get_branch_trunk
+#         run: |
+#           # Pega o nome da branch atual (geralmente main ou develop)
+#           BRANCH_TRUNK=$(git rev-parse --abbrev-ref HEAD)
+#           echo "Branch trunk: $BRANCH_TRUNK"
+#           echo "BRANCH_TRUNK=$BRANCH_TRUNK" >> $GITHUB_ENV
 
-      - name: Obter o nome da branch remota (origin)
-        id: get_branch_origin
-        run: |
-          # Pega o nome da branch remota que está sendo usada no PR
-          BRANCH_ORIGIN=${GITHUB_REF#refs/heads/}
-          echo "Branch origin: $BRANCH_ORIGIN"
-          echo "BRANCH_ORIGIN=$BRANCH_ORIGIN" >> $GITHUB_ENV
+#       - name: Obter o nome da branch remota (origin)
+#         id: get_branch_origin
+#         run: |
+#           # Pega o nome da branch remota que está sendo usada no PR
+#           BRANCH_ORIGIN=${GITHUB_REF#refs/heads/}
+#           echo "Branch origin: $BRANCH_ORIGIN"
+#           echo "BRANCH_ORIGIN=$BRANCH_ORIGIN" >> $GITHUB_ENV
 
-      - name: Executar JAR com parâmetros
-        run: |
-          # Caminho para o arquivo JAR
-          echo "Executando JAR com os parâmetros: Branch Trunk=${{ env.BRANCH_TRUNK }}, Branch Origin=${{ env.BRANCH_ORIGIN }}, Token=${{ secrets.GITHUB_TOKEN }}"
-          # java -jar version-control/version-control-layouts.jar ${{ env.BRANCH_TRUNK }} ${{ env.BRANCH_ORIGIN }} ${{ secrets.GITHUB_TOKEN }}
-          java -jar version-control/version-control-layouts.jar ${{ env.BRANCH_TRUNK }} estudo_versoes ${{ secrets.GITHUB_TOKEN }}
+#       - name: Executar JAR com parâmetros
+#         run: |
+#           # Caminho para o arquivo JAR
+#           echo "Executando JAR com os parâmetros: Branch Trunk=${{ env.BRANCH_TRUNK }}, Branch Origin=${{ env.BRANCH_ORIGIN }}, Token=${{ secrets.GITHUB_TOKEN }}"
+#           # java -jar version-control/version-control-layouts.jar ${{ env.BRANCH_TRUNK }} ${{ env.BRANCH_ORIGIN }} ${{ secrets.GITHUB_TOKEN }}
+#           java -jar version-control/version-control-layouts.jar ${{ env.BRANCH_TRUNK }} estudo_versoes ${{ secrets.GITHUB_TOKEN }}
 
  
