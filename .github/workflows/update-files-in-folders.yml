@@ -58,8 +58,8 @@ jobs:
       - name: Detectar pastas alteradas
         id: detect_changes
         run: |
-          # Obter a lista de arquivos alterados entre main e $PR_BRANCH
-          changed_files=$(git diff --name-only main $PR_BRANCH)
+          # Obter a lista de arquivos alterados entre main e $BRANCH_ORIGIN_NAME
+          changed_files=$(git diff --name-only main $BRANCH_ORIGIN_NAME)
           echo "Arquivos alterados: $changed_files"
           
           # Detectar quais pastas foram modificadas 
