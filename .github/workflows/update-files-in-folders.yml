@@ -34,9 +34,15 @@ jobs:
       - name: Ler nome da branch de origem do arquivo
         id: read-branch-name
         run: |
-          # Ler o nome da branch do arquivo
-          BRANCH_ORIGIN_NAME=$(cat .github/branch-name.txt)
-          echo "Nome da branch de origem do PR: $BRANCH_ORIGIN_NAME"
+          # Verificar se o arquivo .github/branch-name.txt existe
+          if [ -f .github/branch-name.txt ]; then
+            # Ler o nome da branch do arquivo
+            BRANCH_ORIGIN_NAME=$(cat .github/branch-name.txt)
+            echo "Nome da branch de origem do PR: $BRANCH_ORIGIN_NAME"
+          else
+            echo "Erro: O arquivo .github/branch-name.txt não existe!"
+            exit 1
+          fi
 
        # Passo 3: Configurar Git para garantir que os branches sejam recuperados
       - name: Set up git
