@@ -29,7 +29,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-       # Passo 2: Configurar Git para garantir que os branches sejam recuperados
+
+      # Passo 2: Ler o nome da branch de origem do arquivo .github/branch-name.txt
+      - name: Ler nome da branch de origem do arquivo
+        id: read-branch-name
+        run: |
+          # Ler o nome da branch do arquivo
+          BRANCH_ORIGIN_NAME=$(cat .github/branch-name.txt)
+          echo "Nome da branch de origem do PR: $BRANCH_ORIGIN_NAME"
+
+       # Passo 3: Configurar Git para garantir que os branches sejam recuperados
       - name: Set up git
         run: |
           # Adiciona o remote 'remote' se necessário
@@ -39,14 +48,13 @@ jobs:
           git pull remote main
 
           # Agora, capturamos o nome da branch de origem do PR do passo anterior
-          PR_BRANCH="${{ env.NAME_BRANCH_ORIGIN }}"
-          echo "Nome da branch de origem do PR: $PR_BRANCH"
+          echo "Nome da branch de origem do PR: $BRANCH_ORIGIN_NAME"
 
           # Fazer o checkout na branch de origem do PR
-          git checkout $PR_BRANCH
-          git pull remote $PR_BRANCH        
+          git checkout $BRANCH_ORIGIN_NAME
+          git pull remote $BRANCH_ORIGIN_NAME        
 
-       # Passo 3: Detectar quais pastas foram alteradas
+       # Passo 4: Detectar quais pastas foram alteradas
       - name: Detectar pastas alteradas
         id: detect_changes
         run: |
