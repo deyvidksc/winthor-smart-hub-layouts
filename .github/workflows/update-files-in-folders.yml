@@ -1,4 +1,4 @@
- name: Atualizar Versão no versao.json
+name: Atualizar Versão no versao.json
 
 on:
   push:
