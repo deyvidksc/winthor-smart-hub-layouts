@@ -6,11 +6,12 @@ on:
     types:
        - completed
        - success
-  push:
-    branches:
-      - main
-    paths:
-      - '**/*'
+       
+  #push:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - '**/*'
 
 permissions:
   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório      
