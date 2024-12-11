@@ -33,7 +33,7 @@ jobs:
           # Salvar o nome da branch em um arquivo dentro da pasta .github/
           echo $PR_BRANCH > .github/branch-name.txt
 
-      # Passo 3: Configurar o Git e fazer o pull da branch remota para garantir que está atualizado
+      # Passo 3: Configurar o Git e garantir que a branch main esteja atualizada
       - name: Configurar Git e garantir que a branch main esteja atualizada
         run: |
           git config --global user.name 'GitHub Actions'
@@ -56,5 +56,8 @@ jobs:
           # Commitar as mudanças
           git commit -m "Salvar o nome da branch de origem do PR em .github/branch-name.txt"
 
-          # Fazer o push das mudanças para o repositório remoto
+          # Garantir que a branch remota 'main' esteja sincronizada
+          git fetch origin
+          
+          # Fazer o push das mudanças para a branch 'main' remota
           git push origin main
