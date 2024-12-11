@@ -2,7 +2,7 @@ name: Atualizar Versão no versao.json
 
 on:
   workflow_run:
-    workflows: ["CI/CD - Criar Tag de Release"]
+    workflows: ["CI/CD - Criar Tag de Release", "Capturar nome da branch de origem do PR"]
     types:
        - completed
        - success
