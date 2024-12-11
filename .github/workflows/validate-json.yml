@@ -26,21 +26,21 @@
 
 name: Validate JSON
 
-#on: [push]
+on: [push]
 #on:
  # pull_request:
   #  branches:
    #   - main  # Ou a branch que você deseja monitorar para o PR
     #  - develop
 
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-    branches:
-      - main  # Ou a branch que você deseja monitorar para o PR
-      - develop
+  #pull_request:
+    #types:
+    #  - opened
+    #  - synchronize
+    #  - reopened
+    #branches:
+     # - main  # Ou a branch que você deseja monitorar para o PR
+    #  - develop
 jobs:
   validate-json:
     runs-on: ubuntu-latest
