@@ -1,4 +1,4 @@
-name: Capturar nome da branch de origem do PR
+name: Capturar e Usar o Nome da Branch de Origem do PR
 
 on:
   pull_request:
@@ -13,21 +13,20 @@ jobs:
   capture-branch:
     runs-on: ubuntu-latest
     steps:
+      # Passo 1: Fazer o checkout do repositório
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # Passo 1: Capturar o nome da branch de origem do PR
+      # Passo 2: Capturar o nome da branch de origem do PR e salvar em uma variável de ambiente
       - name: Capturar nome da branch de origem do PR
-        id: get-pr-branch
         run: |
-          # O nome da branch de origem do PR está em github.head_ref
-          PR_BRANCH="${{ github.head_ref }}"
+          PR_BRANCH="${{ github.head_ref }}"  # Captura o nome da branch do PR
           echo "Branch de origem do PR: $PR_BRANCH"
           
-          # Definir a variável de ambiente 'NAME_BRANCH_ORIGIN' para o nome da branch
-          echo "NAME_BRANCH_ORIGIN=$PR_BRANCH" >> $GITHUB_ENV
+          # Definir a variável de ambiente 'NAME_BRANCH_ORIGIN'
+          echo "NAME_BRANCH_ORIGIN=$PR_BRANCH" >> $GITHUB_ENV  # Salva a variável de ambiente
 
-      # Passo 2: Verificar se a variável foi definida corretamente
+      # Passo 3: Verificar o valor da variável 'NAME_BRANCH_ORIGIN'
       - name: Verificar valor da variável de ambiente
         run: |
           echo "O valor da variável NAME_BRANCH_ORIGIN é: $NAME_BRANCH_ORIGIN"
