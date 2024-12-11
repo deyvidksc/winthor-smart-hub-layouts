@@ -17,19 +17,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # Passo 2: Capturar o nome da branch de origem do PR e salvar em uma variável de ambiente
-      - name: Capturar nome da branch de origem do PR
-        id: capture-branch
+      - name: Gerar dados e salvar em arquivo
         run: |
-          # Captura o nome da branch de origem do PR
-          PR_BRANCH="${{ github.head_ref }}"
-          echo "Branch de origem do PR: $PR_BRANCH"
-          
-          # Salva o nome da branch em um arquivo temporário
-          echo "$PR_BRANCH" > branch-name.txt
+          # Crie o arquivo com os dados que você quer compartilhar
+          echo "${{ github.head_ref }}" > .github/branch-name.txt
 
-      - name: Upload branch name as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: branch-name
-          path: branch-name.txt
+      - name: Commit e push do arquivo
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .github/branch-name.txt
+          git commit -m "Salvar nome da branch no arquivo"
+          git push origin main
