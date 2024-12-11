@@ -8,11 +8,9 @@ on:
       - reopened
     branches:
       - 'main'
-  #  paths:
-  #    - '**/*'
 
 permissions:
-  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório      
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
 
 jobs:
   update-version:
@@ -29,5 +27,24 @@ jobs:
         id: get-pr-branch
         run: |
           # O nome da branch de origem do PR está em github.head_ref
-          echo "Branch de origem do PR: ${{ github.head_ref }}"
-          echo "::set-output name=pr_branch::${{ github.head_ref }}"
+          PR_BRANCH="${{ github.head_ref }}"
+          echo "Branch de origem do PR: $PR_BRANCH"
+          
+          # Salvar o nome da branch em um arquivo dentro da pasta .github/
+          echo $PR_BRANCH > .github/branch-name.txt
+
+      # Passo 3: Commitar e fazer o push do arquivo atualizado
+      - name: Commit e push do arquivo com o nome da branch
+        run: |
+          # Configurar o Git
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+
+          # Adicionar o arquivo alterado
+          git add .github/branch-name.txt
+
+          # Commitar as mudanças
+          git commit -m "Salvar o nome da branch de origem do PR em .github/branch-name.txt"
+
+          # Fazer push das mudanças
+          git push origin HEAD:main
