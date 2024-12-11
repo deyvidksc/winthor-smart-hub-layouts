@@ -31,4 +31,3 @@ jobs:
       - name: Verificar valor da variável de ambiente
         run: |
           echo "O valor da variável NAME_BRANCH_ORIGIN é: $NAME_BRANCH_ORIGIN"
-         
