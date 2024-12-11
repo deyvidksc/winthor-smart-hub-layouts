@@ -48,3 +48,8 @@ jobs:
 
           # Fazer push das mudanças
           git push origin HEAD:main
+
+          # Autenticação com o token GH_TOKEN
+          git config --global credential.helper 'cache --timeout=3600'
+          echo "https://${{ secrets.GH_TOKEN }}:@github.com" > ~/.git-credentials
+          
