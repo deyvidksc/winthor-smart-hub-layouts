@@ -21,7 +21,7 @@ jobs:
         id: detect_changes
         run: |
           # Obter a lista de arquivos alterados entre main e teste
-          changed_files=$(git diff --name-only origin/main...origin/teste)
+          changed_files=$(git diff --name-only origin/main...origin/estudo_versoes)
           echo "Arquivos alterados: $changed_files"
           
           # Detectar quais pastas foram modificadas
