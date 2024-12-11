@@ -1,6 +1,11 @@
 name: Atualizar Versão no versao.json
 
 on:
+  workflow_run:
+    workflows: ["CI/CD - Criar Tag de Release"]
+    types:
+       - completed
+       - success
   push:
     branches:
       - main
