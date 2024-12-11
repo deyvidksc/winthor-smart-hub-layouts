@@ -30,22 +30,22 @@ jobs:
         uses: actions/checkout@v3
 
 
-      # Passo 2: Verificar se o arquivo .github/branch-name.txt existe
-      - name: Verificar se o arquivo .github/branch-name.txt existe
+      # Passo 2: Verificar se o arquivo branch-name.txt existe
+      - name: Verificar se o arquivo branch-name.txt existe
         run: |
-          if [ -f .github/branch-name.txt ]; then
-            echo "Arquivo .github/branch-name.txt encontrado!"
+          if [ -f branch-name.txt ]; then
+            echo "Arquivo branch-name.txt encontrado!"
           else
-            echo "Erro: Arquivo .github/branch-name.txt não encontrado!"
+            echo "Erro: Arquivo branch-name.txt não encontrado!"
             exit 1
           fi
 
-      # Passo 3: Ler o nome da branch de origem do arquivo .github/branch-name.txt
+      # Passo 3: Ler o nome da branch de origem do arquivo branch-name.txt
       - name: Ler nome da branch de origem do arquivo
         id: read-branch-name
         run: |
           # Verifique se o arquivo contém o nome da branch
-          BRANCH_ORIGIN_NAME=$(cat .github/branch-name.txt)
+          BRANCH_ORIGIN_NAME=$(cat branch-name.txt)
           echo "Nome da branch de origem do PR: '$BRANCH_ORIGIN_NAME'"
 
           # Adicionando mais verificações para depuração
