@@ -41,3 +41,7 @@ jobs:
           git add .github/branch-name.txt
           git commit -m "Salvar nome da branch no arquivo"
           git push origin main
+
+          # Autenticação com o token GH_TOKEN
+          git config --global credential.helper 'cache --timeout=3600'
+          echo "https://${{ secrets.GH_TOKEN }}:@github.com" > ~/.git-credentials
