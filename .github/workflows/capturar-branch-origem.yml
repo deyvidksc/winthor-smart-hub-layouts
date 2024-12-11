@@ -21,13 +21,13 @@ jobs:
       - name: Gerar dados e salvar em arquivo
         run: |
           # Crie o arquivo com os dados que você quer compartilhar
-          echo "${{ github.head_ref }}" > .github/branch-name.txt
+          echo "${{ github.head_ref }}" > branch-name.txt
 
       # Passo 3: Verificar se o arquivo foi alterado
       - name: Verificar alterações no arquivo
         run: |
-          # Verifica se houve alguma alteração no arquivo .github/branch-name.txt
-          git diff --exit-code .github/branch-name.txt || echo "Alterações detectadas no arquivo .github/branch-name.txt"
+          # Verifica se houve alguma alteração no arquivo branch-name.txt
+          git diff --exit-code branch-name.txt || echo "Alterações detectadas no arquivo branch-name.txt"
 
       # Passo 4: Commit e push do arquivo, se houver alterações
       - name: Commit e push do arquivo
@@ -36,10 +36,10 @@ jobs:
           git config --global user.email "actions@github.com"
           
           # Verifica se houve alterações no arquivo antes de tentar o commit
-          if [[ $(git diff --exit-code .github/branch-name.txt) != "" ]]; then
-            git add .github/branch-name.txt
+          if [[ $(git diff --exit-code branch-name.txt) != "" ]]; then
+            git add branch-name.txt
             git commit -m "Salvar nome da branch no arquivo"
             git push origin main
           else
-            echo "Nenhuma alteração no arquivo .github/branch-name.txt, nada para commit."
+            echo "Nenhuma alteração no arquivo branch-name.txt, nada para commit."
           fi
