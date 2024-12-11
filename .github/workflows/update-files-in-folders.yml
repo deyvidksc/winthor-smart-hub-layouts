@@ -89,15 +89,20 @@ jobs:
         run: |
           # Adicionar as mudanças ao git
           git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'          
-          git add .
-          git commit -m "Atualizar versao.json nas pastas alteradas"
-          git push remote main
+          git config --global user.email 'actions@github.com'
+          
+          # Verificar se há algo para comitar
+          if [[ $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "Atualizar versao.json nas pastas alteradas"
+            git push remote main
+          else
+            echo "Nenhuma alteração para comitar"
+          fi
 
           # Autenticação com o token GH_TOKEN
           git config --global credential.helper 'cache --timeout=3600'
           echo "https://${{ secrets.GH_TOKEN }}:@github.com" > ~/.git-credentials
-
 
 
 # name: "CI/CD - Atualizar Version.json"
