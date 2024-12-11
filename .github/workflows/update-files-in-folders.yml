@@ -34,15 +34,21 @@ jobs:
           git fetch remote
           git checkout main
           git pull remote main
-          git checkout estudo_versoes
-          git pull remote estudo_versoes
+          #git checkout estudo_versoes
+          #git pull remote estudo_versoes
+          # Obter o nome da branch de origem do PR
+          PR_BRANCH="${{ github.head_ref }}"          
+          # Checkout na branch de origem do PR (aquela que foi enviada no PR)
+          git checkout $PR_BRANCH
+          git pull remote $PR_BRANCH
+          
 
       # Passo 3: Detectar quais pastas foram alteradas
       - name: Detectar pastas alteradas
         id: detect_changes
         run: |
-          # Obter a lista de arquivos alterados entre main e estudo_versoes
-          changed_files=$(git diff --name-only main estudo_versoes)
+          # Obter a lista de arquivos alterados entre main e $PR_BRANCH
+          changed_files=$(git diff --name-only main $PR_BRANCH)
           echo "Arquivos alterados: $changed_files"
           
           # Detectar quais pastas foram modificadas
