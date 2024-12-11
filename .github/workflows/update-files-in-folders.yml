@@ -34,7 +34,7 @@ jobs:
       - name: Detectar pastas alteradas
         id: detect_changes
         run: |
-          # Obter a lista de arquivos alterados entre main e teste
+          # Obter a lista de arquivos alterados entre main e estudo_versoes
           changed_files=$(git diff --name-only remote/main...remote/estudo_versoes)
           echo "Arquivos alterados: $changed_files"
           
