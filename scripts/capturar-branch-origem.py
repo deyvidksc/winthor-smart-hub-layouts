@@ -19,4 +19,7 @@ def save_branch_name(branch_name):
         f.write(branch_name)
 
 if __name__ == "__main__": 
+    parser = argparse.ArgumentParser(description='Save branch name to a file')
+    parser.add_argument('--branch-name', type=str, required=True, help='The name of the branch')
+    args = parser.parse_args()
     save_branch_name(args.branch_name)
