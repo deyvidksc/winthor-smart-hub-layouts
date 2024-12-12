@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install gitpython
 
-      - name: Fazer upload do artefato
+      - name: Baixar artefato com nome da branch
         uses: actions/download-artifact@v4
         with:
           name: branch-name-artifact  # Nome do artefato
