@@ -28,6 +28,8 @@ jobs:
         run: |
           gh run list  # Lista todas as execuções de workflow
           gh run artifacts list  # Lista os artefatos de uma execução específica
+        env:
+          GH_TOKEN: ${{ sesecrets.GH_TOKEN }}  # Definindo o token do GitHub CLI
 
       
       - name: Baixar artefato com o nome da branch
