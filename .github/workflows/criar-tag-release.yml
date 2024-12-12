@@ -100,23 +100,6 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Criar diretório temporário e arquivo com nome da branch
-        run: |
-          # Cria um diretório temporário para armazenar o nome da branch
-          mkdir -p /tmp/artifacts
-          
-          # Cria um arquivo contendo o nome da branch de origem
-          echo "${{ github.event.pull_request.head.ref }}" > /tmp/artifacts/branch-name.txt
-          
-          # Lista o conteúdo do diretório para garantir que o arquivo foi criado
-          ls -lh /tmp/artifacts
-
-      - name: Upload artefato com nome da branch
-        uses: actions/upload-artifact@v3
-        with:
-          name: pr-branch-name-artifact  # Nome do artefato
-          path: /tmp/artifacts/branch-name.txt  # Caminho para o arquivo que contém o nome da branch
- 
           
      # - name: Gerar Release
      #   uses: rymndhng/release-on-push-action@master
