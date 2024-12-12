@@ -1,10 +1,9 @@
 name: Criar Tag e Release
 on:
-  #workflow_run:
-   # workflows: ["CI/CD - Registrar Arquivos Modificados"]
-    #types:
-     #  - completed
-      # - success
+  workflow_run:
+    workflows: ["Criar Artefato com Nome da Branch"]  # Espera a execução do workflow "Criar Tag e Release"
+    types: [completed]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
+    
   pull_request:
     types:
       - closed
