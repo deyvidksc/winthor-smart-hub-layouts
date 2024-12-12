@@ -5,7 +5,7 @@ on:
     types: [completed]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
 
 permissions:
-  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+  contents: read  # Permission to read contents/artifacts]  # Permite ao GITHUB_TOKEN fazer push para o repositório
 
 jobs:
   executa-script-py:
