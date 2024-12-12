@@ -5,7 +5,7 @@ on:
     types: [completed]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
 
 permissions:
-  contents: read  # Permission to read contents/artifacts]  # Permite ao GITHUB_TOKEN fazer push para o repositório
+  contents: read  # Permite ao GITHUB_TOKEN fazer push para o repositório
 
 jobs:
   executa-script-py:
@@ -33,10 +33,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
        
-
       - name: Listar todas as execuções de workflows e extrair o nome da branch
         run: |
-          # Lista todas as execuções de workflow no repositório, filtrando pelo nome do workflow e pelo status de sucesso 
+          # Lista todas as execuções de workflow no repositório, filtrando pelo nome do workflow e pelo status de sucesso
           workflow_runs=$(gh run list --repo ${{ github.repository }} --workflow "Criar Artefato com Nome da Branch" --json headBranch,status,conclusion -q 'map(select(.status == "completed" and .conclusion == "success")) | .[].headBranch' | sort -u | head -n 1)
           
           # Exibe o resultado da lista para debug
@@ -48,25 +47,14 @@ jobs:
             exit 1
           fi
           
-          # Garantir que workflow_runs seja um array JSON válido
-          # Envolvendo o conteúdo em uma estrutura de array
-          workflow_runs_json="[$workflow_runs]"
-          
-          # Exibe o JSON formatado para depuração
-          echo "Formato JSON de execução de workflows: $workflow_runs_json"
-          
-          # Extrai o nome da primeira branch (caso haja execuções)
-          BRANCH_NAME=$(echo "$workflow_runs_json" | jq -r '.[0]')
+          # Agora, BRANCH_NAME será o valor de workflow_runs (que é o nome da branch)
+          BRANCH_NAME=$workflow_runs
           
           # Exibe o nome da branch extraído
           echo "Nome da branch extraído: $BRANCH_NAME"
         
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
-
-
-          
-      
 
       - name: Run script atualizar-versao-cada-layout
         run: |
