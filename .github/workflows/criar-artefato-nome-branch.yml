@@ -1,0 +1,29 @@
+name: Criar Artefato com Nome da Branch
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - closed
+    branches:
+      - main
+      - develop  # ou qualquer outra branch de interesse
+
+jobs:
+  cria-artefato:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Criar arquivo com o nome da branch
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          echo "$BRANCH_NAME" > branch-name.txt
+          echo "Nome da branch: $BRANCH_NAME"
+          
+      - name: Fazer upload do artefato com o nome da branch
+        uses: actions/upload-artifact@v3
+        with:
+          name: branch-name-artifact  # Nome do artefato
+          path: branch-name.txt       # Arquivo que contém o nome da branch
