@@ -25,11 +25,12 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
 
 # Função para ler a versão de version.txt
 def get_version_from_file():
-    if not os.path.exists('version.txt'):
+    version_file_path = 'version.txt'
+    if not os.path.exists(version_file_path):
         print(f"Arquivo {version_file_path} não encontrado.")
         return None
 
-    with open('version.txt', 'r') as file:
+    with open(version_file_path, 'r') as file:
         return file.read().strip()
 
 # Função para atualizar o arquivo versao.json com a versão de version.txt
@@ -43,17 +44,21 @@ def update_version_json(directory):
     with open(version_file_path, 'r') as f:
         data = json.load(f)
 
-     versao = get_version_from_file()
-     print(f"versao do arquivo {versao}.")
+    # Obtendo a versão do arquivo version.txt
+    versao = get_version_from_file()
+    if not versao:
+        print("Versão não encontrada no arquivo version.txt.")
+        return
 
-    # Definindo a versão obtida de version.txt
+    print(f"Versão do arquivo version.txt: {versao}.")
+    # Definindo a versão obtida de version.txt no arquivo JSON
     data['versao'] = versao
 
     # Atualizar o arquivo JSON
     with open(version_file_path, 'w') as f:
         json.dump(data, f, indent=4)
 
-    print(f"Versão atualizada para {version} no arquivo versao.json em {directory}")
+    print(f"Versão atualizada para {versao} no arquivo versao.json em {directory}")
 # Função para atualizar o arquivo versao.json
 # def update_version_json(directory):
 #     version_file_path = os.path.join(directory, 'versao.json')
