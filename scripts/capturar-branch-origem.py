@@ -1,6 +1,6 @@
 import os
 import git
-import logging
+import argparse
 
 def save_branch_name(branch_name):
     """Salva o nome da branch atual em um arquivo chamado branch-name.txt"""
