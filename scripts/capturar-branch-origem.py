@@ -6,8 +6,8 @@ def save_branch_name():
 
     # Obtém o nome da branch atual
     repo = git.Repo('.')
-    branch_name = repo.active_branch.name
-
+    head = repo.head
+    branch_name = head.name
     # Cria o arquivo e escreve o nome da branch
     with open('branch-name.txt', 'w') as f:
         f.write(branch_name)
