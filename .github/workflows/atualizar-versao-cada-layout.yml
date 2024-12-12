@@ -24,8 +24,11 @@ jobs:
           pip install gitpython
 
 
-      - name: List all artifacts
-        run: gh run artifacts list --workflow="Criar Tag e Release"
+      - name: Listar artefatos da execução do workflow
+        run: |
+          gh run list  # Lista todas as execuções de workflow
+          gh run artifacts list  # Lista os artefatos de uma execução específica
+
       
       - name: Baixar artefato com o nome da branch
         uses: actions/download-artifact@v4
