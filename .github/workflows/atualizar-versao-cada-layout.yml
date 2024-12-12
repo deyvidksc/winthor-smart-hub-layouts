@@ -1,7 +1,7 @@
 name: Atualizar Versão de Cada Layout
 on:
   workflow_run:
-    workflows: ["Criar Tag e Release", "Criar Artefato com Nome da Branch"]  # Espera a execução do workflow "Criar Tag e Release"
+    workflows: ["Criar Tag e Release"]  # Espera a execução do workflow "Criar Tag e Release"
     types: [completed]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
 
 permissions:
@@ -22,10 +22,11 @@ jobs:
         run: |
           pip install gitpython
 
-      # - name: Baixar artefato com o nome da branch
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: branch-name-artifact  # Nome do artefato
+      # Baixar artefato com o nome da branch
+      - name: Baixar artefato com o nome da branch
+        uses: actions/download-artifact@v3
+        with:
+          name: branch-name-artifact  # Nome do artefato
 
       - name: Verificar o conteúdo do artefato
         run: |
@@ -45,7 +46,7 @@ jobs:
       - name: Debug GitHub context
         run: |
           echo "GitHub Token: ${{ secrets.GH_TOKEN }}"
-          echo "Pull Request Head Ref: $BRANCH_NAME"
+          echo "Nome da Branch: $BRANCH_NAME"
           echo "Base Ref (branch de destino): ${{ github.base_ref }}"          
 
       - name: Run script atualizar-versao-cada-layout
