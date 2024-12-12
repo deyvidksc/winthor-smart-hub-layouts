@@ -7,7 +7,7 @@ def save_branch_name():
     branch_name = os.environ['GITHUB_HEAD_REF']
 
     # Criar o arquivo e escrever o nome da branch
-    with open('.branch-name.txt', 'w') as f:
+    with open('branch-name.txt', 'w') as f:
         f.write(branch_name)
 
     # Inicializar o repositório Git
