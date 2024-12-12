@@ -27,26 +27,32 @@ jobs:
         run: |
           pip install gitpython
 
+      # Verificar artefatos
       - name: Verificar artefatos
         run: |
           echo "Verificando artefatos no diretório atual:"
           ls -lh
-          echo "Tentando acessar o artefato pr-version-artifact"
-          if [ -f pr-ref.txt ]; then
-            echo "Arquivo pr-ref.txt encontrado."
+          echo "Tentando acessar o artefato pr-branch-name-artifact"
+          if [ -f /tmp/artifacts/branch-name.txt ]; then
+            echo "Arquivo branch-name.txt encontrado."
           else
-            echo "Arquivo pr-ref.txt NÃO encontrado."
+            echo "Arquivo branch-name.txt NÃO encontrado."
           fi
-          
-      - name: Baixar artefato com versão e ref
+
+      # Baixar artefato com nome da branch
+      - name: Baixar artefato com nome da branch
         uses: actions/download-artifact@v3
         with:
-          name: pr-version-artifact
- 
+          name: pr-branch-name-artifact
+
       - name: Lendo o ref do PR
         run: |
-          PR_REF=$(cat pr-ref.txt)
-          echo "PR Ref extraído: $PR_REF"          
+          if [ -f /tmp/artifacts/branch-name.txt ]; then
+            PR_REF=$(cat /tmp/artifacts/branch-name.txt)
+            echo "PR Ref extraído: $PR_REF"
+          else
+            echo "Arquivo branch-name.txt não encontrado após o download."
+          fi      
 
       - name: Debug GitHub context
         run: |
