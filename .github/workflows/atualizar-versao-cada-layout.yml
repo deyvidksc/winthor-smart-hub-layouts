@@ -58,4 +58,8 @@ jobs:
 
       - name: Run script atualizar-versao-cada-layout
         run: |
+          echo "Passando parâmetros para o script Python:"
+          echo "Token: ${{ secrets.GH_TOKEN }}"
+          echo "Branch de Origem: $BRANCH_NAME"
+          echo "Branch de Destino: ${{ github.base_ref }}"
           python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} $BRANCH_NAME ${{ github.base_ref }}
