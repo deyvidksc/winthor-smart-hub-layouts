@@ -18,6 +18,5 @@ def save_branch_name(branch_name):
     with open('branch-name.txt', 'w') as f:
         f.write(branch_name)
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    save_branch_name(branch_name)
+if __name__ == "__main__": 
+    save_branch_name(args.branch_name)
