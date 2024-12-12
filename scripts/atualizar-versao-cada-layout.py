@@ -25,7 +25,7 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
 
 # Função para ler a versão de version.txt
 def get_version_from_file():
-    if not os.path.exists("version.txt'):
+    if not os.path.exists('version.txt'):
         print(f"Arquivo {version_file_path} não encontrado.")
         return None
 
