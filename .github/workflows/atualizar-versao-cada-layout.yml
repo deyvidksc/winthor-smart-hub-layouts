@@ -22,6 +22,18 @@ jobs:
       - name: Install gitpython
         run: |
           pip install gitpython
+
+
+          
+      - name: Configurar o token do GitHub CLI
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
+          
+      - name: Listar todos os artefatos no repositório
+        run: |
+          gh artifact list --repo ${{ github.repository }}  # Lista todos os artefatos no repositório
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
        
       - name: Baixar artefato com o nome da branch
         uses: actions/download-artifact@v4
