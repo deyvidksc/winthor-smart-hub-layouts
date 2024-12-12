@@ -23,15 +23,13 @@ jobs:
         run: |
           pip install gitpython
 
-
-          
       - name: Configurar o token do GitHub CLI
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
           
-      - name: Listar todos os artefatos no repositório
+      - name: Listar todas as execuções de workflows
         run: |
-          gh artifact list --repo ${{ github.repository }}  # Lista todos os artefatos no repositório
+          gh run list --repo deyvidksc/winthor-smart-hub-layouts  # Lista todas as execuções de workflow no repositório
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
        
