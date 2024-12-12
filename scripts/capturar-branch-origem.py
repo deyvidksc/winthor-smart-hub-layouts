@@ -2,7 +2,7 @@ import os
 import git
 import logging
 
-def save_branch_name():
+def save_branch_name(branch_name):
     """Salva o nome da branch atual em um arquivo chamado branch-name.txt"""
     # Obtém o nome da branch atual
     repo = git.Repo('.')
@@ -20,4 +20,4 @@ print(f"A branch atual é: {branch_name}")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    save_branch_name()
+    save_branch_name(branch_name)
