@@ -2,8 +2,6 @@ name: Criar Artefato com Nome da Branch
 on:
   pull_request:
     types:
-      - opened
-      - synchronize
       - closed
     branches:
       - main
