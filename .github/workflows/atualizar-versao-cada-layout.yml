@@ -24,7 +24,7 @@ jobs:
           pip install gitpython
 
       - name: Fazer upload do artefato
-        uses: actions/upload-artifact@v4
+        uses: actions/download-artifact@v4
         with:
           name: branch-name-artifact  # Nome do artefato
           path: "temp/branch-name.txt"  # Caminho do arquivo a ser enviado como artefato
