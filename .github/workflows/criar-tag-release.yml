@@ -100,7 +100,19 @@ jobs:
           draft: false
           prerelease: false
 
+      # Criar um arquivo com o ref do PR
+      - name: Criar arquivo pr-ref.txt
+        run: |
+          echo "${{ github.event.pull_request.head.ref }}" > pr-ref.txt
 
+      # Criar um artefato com a versão e o ref do PR
+      - name: Upload PR ref and version as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pr-version-artifact
+          path: |
+            version.txt
+            pr-ref.txt
  
           
      # - name: Gerar Release
