@@ -32,7 +32,7 @@ jobs:
 
       - name: Verificar se o arquivo já existe
         run: |
-          if [ -f ${{ github.workspace }}"/branch-name.txt ]; then
+          if [ -f ${{ github.workspace }}"/branch-name.txt" ]; then
             echo "$(date +'%Y-%m-%d %H:%M:%S') - Arquivo branch-name.txt encontrado para a branch ${{ github.head_ref }}."
           else
             echo "$(date +'%Y-%m-%d %H:%M:%S') - ERRO: Arquivo branch-name.txt não encontrado para a branch ${{ github.head_ref }}." >> $GITHUB_WORKSPACE/error.log
