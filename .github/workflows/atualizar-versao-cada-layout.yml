@@ -1,4 +1,4 @@
-name: Capturar e Usar o Nome da Branch de Origem do PR
+name: Atualizar Versão de Cada Layout
 
 on:
   pull_request:
@@ -21,4 +21,4 @@ jobs:
         run: |
           pip install gitpython
       - name: Run your script
-        run: python scripts/capturar-branch-origem.py ${{ secrets.GH_TOKEN }} ${{ github.head_ref }} ${{ github.base_ref }}
+        run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.head_ref }} ${{ github.base_ref }}
