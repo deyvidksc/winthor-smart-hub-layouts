@@ -52,6 +52,9 @@ jobs:
           
           # Exibe o nome da branch extraído
           echo "Nome da branch extraído: $BRANCH_NAME"
+
+          # Exporta BRANCH_NAME como variável de ambiente para ser usado nas próximas etapas
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
         
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
