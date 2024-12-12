@@ -47,14 +47,17 @@ jobs:
             exit 1
           fi
           
-          # Agora, BRANCH_NAME será o valor de workflow_runs (que é o nome da branch)
-          BRANCH_NAME=$workflow_runs
+          # Agora, BRANCH_ORIGEM será o valor de workflow_runs (que é o nome da branch)
+          BRANCH_ORIGEM=$workflow_runs
           
           # Exibe o nome da branch extraído
-          echo "Nome da branch extraído: $BRANCH_NAME"
+          echo "Nome da branch extraído: $BRANCH_ORIGEM"
 
-          # Exporta BRANCH_NAME como variável de ambiente para ser usado nas próximas etapas
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          # Exporta BRANCH_ORIGEM como variável de ambiente para ser usado nas próximas etapas
+          echo "BRANCH_ORIGEM=$BRANCH_ORIGEM" >> $GITHUB_ENV
+          
+          # Exporta base_ref como variável de ambiente para ser usado nas próximas etapas
+          echo "BRANCH_DESTINO=${{ github.base_ref }}" >> $GITHUB_ENV          
         
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
@@ -63,6 +66,6 @@ jobs:
         run: |
           echo "Passando parâmetros para o script Python:"
           echo "Token: ${{ secrets.GH_TOKEN }}"
-          echo "Branch de Origem: $BRANCH_NAME"
-          echo "Branch de Destino: ${{ github.base_ref }}"
-          python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} $BRANCH_NAME ${{ github.base_ref }}
+          echo "Branch de Origem: $BRANCH_ORIGEM"
+          echo "Branch de Destino: $BRANCH_DESTINO"
+          python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} $BRANCH_ORIGEM $BRANCH_DESTINO
