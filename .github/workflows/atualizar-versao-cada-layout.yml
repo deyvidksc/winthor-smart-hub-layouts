@@ -17,18 +17,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - name: Set up Python environment
         uses: actions/setup-python@v3
         with:
           python-version: '3.x'  # Specify your desired Python version
+          
       - name: Install gitpython
         run: |
           pip install gitpython
+          
       - name: Baixar artefato com versão e ref
         uses: actions/download-artifact@v3
         with:
           name: pr-version-artifact
-
+ 
       - name: Lendo o ref do PR
         run: |
           PR_REF=$(cat pr-ref.txt)
