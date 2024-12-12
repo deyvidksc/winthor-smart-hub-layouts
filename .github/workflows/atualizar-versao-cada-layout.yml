@@ -33,21 +33,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
        
-      - name: Listar todas as execuções de workflows
+      - name: Listar todas as execuções de workflows e extrair o nome da branch
         run: |
-          # Lista todas as execuções de workflow no repositório atual, usando a variável dinâmica
-          workflow_runs=$(gh run list --repo ${{ github.repository }} --json headBranch -q '.[].headBranch')
+          # Lista todas as execuções de workflow no repositório, filtrando pelo nome do workflow e pelo status de sucesso
+          workflow_runs=$(gh run list --repo ${{ github.repository }} --workflow "Criar Artefato com Nome da Branch" --json headBranch,status -q 'map(select(.status == "completed" and .conclusion == "success")) | .[].headBranch')
           
           # Exibe o resultado da lista para debug
-          echo "Execuções de workflow encontradas: $workflow_runs"
+          echo "Execuções de workflow 'Criar Artefato com Nome da Branch' bem-sucedidas encontradas: $workflow_runs"
           
-          # Extrai o nome da primeira branch (ou escolha outra lógica para selecionar a branch desejada)
-          BRANCH_NAME=$(echo $workflow_runs | jq -r '.[0]')
+          # Extrai o nome da primeira branch (ou outra lógica para selecionar a branch desejada)
+          BRANCH_NAME=$(echo "$workflow_runs" | jq -r '.[0]')
           
+          # Exibe o nome da branch extraído
           echo "Nome da branch extraído: $BRANCH_NAME"
-      
+        
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
+          
       
 
       - name: Run script atualizar-versao-cada-layout
