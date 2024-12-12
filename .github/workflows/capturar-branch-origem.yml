@@ -21,4 +21,4 @@ jobs:
         run: |
           pip install gitpython
       - name: Run your script
-        run: python scripts/capturar-branch-origem.py
+        run: python scripts/capturar-branch-origem.py --branch-name ${{ github.head_ref }}
