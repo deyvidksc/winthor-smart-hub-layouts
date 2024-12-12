@@ -10,6 +10,10 @@ def save_branch_name():
     head = repo.head    
     branch_name = head.name
     print("Head is " + head.name)    
+
+branch_name = repo.active_branch.name
+print(f"A branch atual é: {branch_name}")
+    
     # Cria o arquivo e escreve o nome da branch
     with open('branch-name.txt', 'w') as f:
         f.write(branch_name)
