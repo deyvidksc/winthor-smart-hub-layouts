@@ -11,8 +11,11 @@ def clone_repo(repo_url, token, local_dir):
     return repo
 
 # Função para verificar se há diferenças entre dois branches
-def has_diff_between_branches(repo, branch1, branch2):
-    # Obter os commits dos dois branches
+def has_diff_between_branches(repo, trunk_branch, current_branch):
+    # Tente acessar os branches remotos explicitamente
+    branch1 = f'refs/remotes/origin/{trunk_branch}'  # Se for um branch remoto
+    branch2 = f'refs/remotes/origin/{current_branch}'  # Se for um branch remoto
+    
     commit1 = repo.commit(branch1)
     commit2 = repo.commit(branch2)
 
