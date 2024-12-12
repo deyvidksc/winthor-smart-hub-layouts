@@ -29,3 +29,10 @@ jobs:
           else
             echo "Nenhuma alteração no arquivo branch-name.txt, nada para commit."
           fi
+
+      - name: Verificar se o arquivo já existe
+        run: |
+          if [ ! -f "$GITHUB_WORKSPACE/branch-name.txt" ]; then
+            echo "O arquivo branch-name.txt é necessário para continuar. Abortando."
+            exit 1
+          fi
