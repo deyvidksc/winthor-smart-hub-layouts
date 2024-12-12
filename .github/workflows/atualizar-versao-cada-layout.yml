@@ -11,6 +11,7 @@ jobs:
   executa-script-py:
     runs-on: ubuntu-latest
     steps:
+    
       - uses: actions/checkout@v3
 
       - name: Set up Python environment
@@ -22,11 +23,14 @@ jobs:
         run: |
           pip install gitpython
 
-      # Baixar artefato com o nome da branch
-      - name: Baixar artefato com o nome da branch
-        uses: actions/download-artifact@v3
+      - name: Fazer upload do artefato
+        uses: actions/upload-artifact@v4
         with:
           name: branch-name-artifact  # Nome do artefato
+          path: "temp/branch-name.txt"  # Caminho do arquivo a ser enviado como artefato
+      - name: Baixar artefato com o nome da branch
+        run: ls -R temp
+    
 
       - name: Verificar o conteúdo do artefato
         run: |
