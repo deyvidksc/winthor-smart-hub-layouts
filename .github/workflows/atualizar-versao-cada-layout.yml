@@ -3,26 +3,21 @@ on:
   workflow_run:
     workflows: ["Criar Tag e Release", "Criar Artefato com Nome da Branch"]  # Espera a execução do workflow "Criar Tag e Release"
     types: [completed]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
-    
-  #pull_request:
-    #types: [closed]  # Evento disparado quando o PR é fechado
-    #branches: 
-      #- main
-      #- develop  # Filtra as branches de destino (main ou develop)
+
 permissions:
   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
-  
+
 jobs:
   executa-script-py:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set up Python environment
         uses: actions/setup-python@v3
         with:
-          python-version: '3.x'  # Specify your desired Python version
-          
+          python-version: '3.x'  # Especifica a versão do Python que você deseja
+
       - name: Install gitpython
         run: |
           pip install gitpython
@@ -34,20 +29,25 @@ jobs:
 
       - name: Verificar o conteúdo do artefato
         run: |
-          if [ -f branch-name.txt ]; then
-            BRANCH_NAME=$(cat branch-name.txt)
+          # Listando os arquivos extraídos para verificar onde está o arquivo
+          echo "Verificando arquivos extraídos do artefato:"
+          ls -lh ${{ github.workspace }}
+
+          # Checando se o arquivo 'branch-name.txt' está na pasta do artefato
+          if [ -f "${{ github.workspace }}/branch-name.txt" ]; then
+            BRANCH_NAME=$(cat "${{ github.workspace }}/branch-name.txt")
             echo "Nome da branch extraído: $BRANCH_NAME"
           else
             echo "O arquivo branch-name.txt não foi encontrado!"
             exit 1
           fi
 
-
       - name: Debug GitHub context
         run: |
           echo "GitHub Token: ${{ secrets.GH_TOKEN }}"
-          echo "Pull Request Head Ref: $BRANCH_NAME
+          echo "Pull Request Head Ref: $BRANCH_NAME"
           echo "Base Ref (branch de destino): ${{ github.base_ref }}"          
+
       - name: Run script atualizar-versao-cada-layout
-        #run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.head_ref }} ${{ github.base_ref }}
-        run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} $BRANCH_NAME ${{ github.base_ref }}
+        run: |
+          python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} $BRANCH_NAME ${{ github.base_ref }}
