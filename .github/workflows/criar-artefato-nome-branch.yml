@@ -7,7 +7,7 @@ on:
       - closed
     branches:
       - main
-      - develop  # ou qualquer outra branch de interesse
+      - develop   # ou qualquer outra branch de interesse
 
 jobs:
   cria-artefato:
