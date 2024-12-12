@@ -23,14 +23,12 @@ jobs:
         run: |
           pip install gitpython
 
-      - name: Baixar artefato com nome da branch
+      - name: Baixar artefato com o nome da branch
         uses: actions/download-artifact@v4
         with:
-          name: branch-name-artifact  # Nome do artefato
-          path: "temp"  # Caminho do arquivo a ser enviado como artefato
-      - name: Display structure of downloaded files
-        run: ls -R temp
-    
+          name: branch-name-artifact  # Nome do artefato (deve ser o mesmo usado no upload)
+          path: "./temp"  # Caminho onde o artefato será extraído (diretório temporário para salvar o arquivo)
+
 
       - name: Verificar o conteúdo do artefato
         run: |
