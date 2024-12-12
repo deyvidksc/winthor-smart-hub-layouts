@@ -5,6 +5,9 @@ on:
     types: [opened, synchronize, reopened]
     branches: [main]
 
+permissions:
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
+  
 jobs:
   capture-branch:
     runs-on: ubuntu-latest
