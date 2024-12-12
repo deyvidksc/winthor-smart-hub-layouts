@@ -2,13 +2,14 @@ name: Atualizar Versão de Cada Layout
 
 on:
   workflow_run:
-    workflows: ["Criar Tag e Release"]
-    types: [success]
-  pull_request:
-    #types: [opened, synchronize, reopened]
-    types: [closed]
-    branches: [main, develop]   
+    workflows: ["Criar Tag e Release"]  # Espera a execução do workflow "Criar Tag e Release"
+    types: [success]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
 
+  pull_request:
+    types: [closed]  # Evento disparado quando o PR é fechado
+    branches: 
+      - main
+      - develop  # Filtra as branches de destino (main ou develop)
 permissions:
   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
   
