@@ -24,6 +24,12 @@ jobs:
       - name: Install gitpython
         run: |
           pip install gitpython
+
+      - name: Debug GitHub context
+        run: |
+          echo "GitHub Token: ${{ secrets.GH_TOKEN }}"
+          echo "Pull Request Head Ref: ${{ github.event.pull_request.head.ref }}"
+          echo "Base Ref (branch de destino): ${{ github.base_ref }}"          
       - name: Run your script
         #run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.head_ref }} ${{ github.base_ref }}
         run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.event.pull_request.head.ref }} ${{ github.base_ref }}
