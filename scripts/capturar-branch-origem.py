@@ -56,15 +56,17 @@ def increment_version(version):
 # Função para fazer commit e push das alterações
 def commit_and_push(repo, branch, token):
     # Adiciona todas as mudanças ao índice
-    repo.git.add(update=True)
+    repo.git.add(update=True) 
     # Realiza o commit
     repo.index.commit("Atualizando a versão no arquivo versao.json")
     # URL do repositório com autenticação via token
-    remote_url = f'https://{token}@github.com/deyvidksc/winthor-smart-hub-layouts.git'  # Ajuste a URL com seu repositório
+    remote_url = f'https://{token}@github.com/deyvidksc/winthor-smart-hub-layouts.git'
     # Acessa o remote
     origin = repo.remotes.origin
-    # Realiza o push para o branch remoto com a URL contendo o token
-    origin.push(refspec=f"{branch}:{branch}", url=remote_url)
+    # Configura a URL com o token de autenticação
+    origin.set_url(remote_url)
+    # Realiza o push para o branch remoto
+    origin.push(refspec=f"{branch}:{branch}")
 
 # Função principal
 def main():
