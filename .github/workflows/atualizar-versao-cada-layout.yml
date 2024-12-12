@@ -22,21 +22,14 @@ jobs:
       - name: Install gitpython
         run: |
           pip install gitpython
-
-
-      - name: Listar artefatos da execução do workflow
-        run: |
-          gh run list  # Lista todas as execuções de workflow
-          gh run artifacts list  # Lista os artefatos de uma execução específica
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
-      
+       
       - name: Baixar artefato com o nome da branch
         uses: actions/download-artifact@v4
         with:
           name: branch-name-artifact  # Nome do artefato (deve ser o mesmo usado no upload)
           path: "./temp"  # Caminho onde o artefato será extraído (diretório temporário para salvar o arquivo)
-
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}   
 
       - name: Verificar o conteúdo do artefato
         run: |
