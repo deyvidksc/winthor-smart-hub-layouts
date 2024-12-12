@@ -30,6 +30,6 @@ jobs:
           echo "GitHub Token: ${{ secrets.GH_TOKEN }}"
           echo "Pull Request Head Ref: ${{ github.event.pull_request.head.ref }}"
           echo "Base Ref (branch de destino): ${{ github.base_ref }}"          
-      - name: Run your script
+      - name: Run script atualizar-versao-cada-layout
         #run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.head_ref }} ${{ github.base_ref }}
         run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.event.pull_request.head.ref }} ${{ github.base_ref }}
