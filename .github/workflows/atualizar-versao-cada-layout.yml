@@ -33,34 +33,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
        
-      - name: Baixar artefato com o nome da branch
-        uses: actions/download-artifact@v4
-        with:
-          name: branch-name-artifact  # Nome do artefato (deve ser o mesmo usado no upload)
-          path: "./temp"  # Caminho onde o artefato será extraído (diretório temporário para salvar o arquivo)
+      - name: Listar todas as execuções de workflows
+        run: |
+          # Lista todas as execuções de workflow no repositório atual, usando a variável dinâmica
+          workflow_runs=$(gh run list --repo ${{ github.repository }} --json headBranch -q '.[].headBranch')
+          
+          # Exibe o resultado da lista para debug
+          echo "Execuções de workflow encontradas: $workflow_runs"
+          
+          # Extrai o nome da primeira branch (ou escolha outra lógica para selecionar a branch desejada)
+          BRANCH_NAME=$(echo $workflow_runs | jq -r '.[0]')
+          
+          echo "Nome da branch extraído: $BRANCH_NAME"
+      
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}   
-
-      - name: Verificar o conteúdo do artefato
-        run: |
-          # Listando os arquivos extraídos para verificar onde está o arquivo
-          echo "Verificando arquivos extraídos do artefato:"
-          ls -lh ${{ github.workspace }}
-
-          # Checando se o arquivo 'branch-name.txt' está na pasta do artefato
-          if [ -f "${{ github.workspace }}/branch-name.txt" ]; then
-            BRANCH_NAME=$(cat "${{ github.workspace }}/branch-name.txt")
-            echo "Nome da branch extraído: $BRANCH_NAME"
-          else
-            echo "O arquivo branch-name.txt não foi encontrado!"
-            exit 1
-          fi
-
-      - name: Debug GitHub context
-        run: |
-          echo "GitHub Token: ${{ secrets.GH_TOKEN }}"
-          echo "Nome da Branch: $BRANCH_NAME"
-          echo "Base Ref (branch de destino): ${{ github.base_ref }}"          
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
+      
 
       - name: Run script atualizar-versao-cada-layout
         run: |
