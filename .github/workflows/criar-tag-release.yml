@@ -4,12 +4,12 @@ on:
     workflows: ["Criar Artefato com Nome da Branch"]  # Espera a execução do workflow "Criar Tag e Release"
     types: [completed]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
     
-  pull_request:
-    types:
-      - closed
-    branches:
-      - main
-      - develop
+  #pull_request:
+    #types:
+      #- closed
+    #branches:
+      #- main
+      #- develop
 
 permissions:
   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
