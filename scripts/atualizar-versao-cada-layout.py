@@ -22,7 +22,7 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
     # Obter o diff entre os dois commits
     diffs = commit1.diff(commit2)
     return len(diffs) > 0  # Retorna True se houver diferenças
-
+ 
 # Função para ler a versão de version.txt
 def get_version_from_file():
     version_file_path = 'version.txt'
