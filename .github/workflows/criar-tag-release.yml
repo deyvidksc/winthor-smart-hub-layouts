@@ -17,7 +17,7 @@ permissions:
   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
 
 jobs:
-  release-on-push:
+  cria-tag-release-on-push:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Use o token correto aqui
