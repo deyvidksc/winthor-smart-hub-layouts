@@ -27,8 +27,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: branch-name-artifact  # Nome do artefato
-          path: "temp/branch-name.txt"  # Caminho do arquivo a ser enviado como artefato
-      - name: Baixar artefato com o nome da branch
+          path: "temp"  # Caminho do arquivo a ser enviado como artefato
+      - name: Display structure of downloaded files
         run: ls -R temp
     
 
