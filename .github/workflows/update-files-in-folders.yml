@@ -32,7 +32,7 @@ jobs:
 
       - name: Verificar se o arquivo já existe
         run: |
-          if [ -f "$GITHUB_WORKSPACE/branch-name.txt" ]; then
+          if [ -f ${{ github.workspace }} ]; then
             echo "$(date +'%Y-%m-%d %H:%M:%S') - Arquivo branch-name.txt encontrado para a branch ${{ github.head_ref }}."
           else
             echo "$(date +'%Y-%m-%d %H:%M:%S') - ERRO: Arquivo branch-name.txt não encontrado para a branch ${{ github.head_ref }}." >> $GITHUB_WORKSPACE/error.log
@@ -44,7 +44,7 @@ jobs:
         id: read-branch-name
         run: |
           # Verifique se o arquivo contém o nome da branch
-          BRANCH_ORIGIN_NAME=$(cat "$GITHUB_WORKSPACE/branch-name.txt")
+          BRANCH_ORIGIN_NAME=$(cat ${{ github.workspace }}"/branch-name.txt")
           echo "Nome da branch de origem do PR: '$BRANCH_ORIGIN_NAME'"
 
           # Adicionando mais verificações para depuração
