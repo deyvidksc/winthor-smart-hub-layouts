@@ -1,4 +1,4 @@
-name: CI/CD - Criar Tag de Release
+name: Criar Tag e Release
 
 on:
   #workflow_run:
