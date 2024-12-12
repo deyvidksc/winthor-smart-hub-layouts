@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: ["Criar Tag e Release"]  # Espera a execução do workflow "Criar Tag e Release"
     types: [success]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
-
+    
   pull_request:
     types: [closed]  # Evento disparado quando o PR é fechado
     branches: 
