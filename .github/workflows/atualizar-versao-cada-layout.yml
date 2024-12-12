@@ -24,12 +24,21 @@ jobs:
       - name: Install gitpython
         run: |
           pip install gitpython
+      - name: Baixar artefato com versão e ref
+        uses: actions/download-artifact@v3
+        with:
+          name: pr-version-artifact
+
+      - name: Lendo o ref do PR
+        run: |
+          PR_REF=$(cat pr-ref.txt)
+          echo "PR Ref extraído: $PR_REF"          
 
       - name: Debug GitHub context
         run: |
           echo "GitHub Token: ${{ secrets.GH_TOKEN }}"
-          echo "Pull Request Head Ref: ${{ github.event.pull_request.head.ref }}"
+          echo "Pull Request Head Ref: $PR_REF
           echo "Base Ref (branch de destino): ${{ github.base_ref }}"          
       - name: Run script atualizar-versao-cada-layout
         #run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.head_ref }} ${{ github.base_ref }}
-        run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.event.pull_request.head.ref }} ${{ github.base_ref }}
+        run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} $PR_REF ${{ github.base_ref }}
