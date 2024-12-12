@@ -26,6 +26,17 @@ jobs:
       - name: Install gitpython
         run: |
           pip install gitpython
+
+      - name: Verificar artefatos
+        run: |
+          echo "Verificando artefatos no diretório atual:"
+          ls -lh
+          echo "Tentando acessar o artefato pr-version-artifact"
+          if [ -f pr-ref.txt ]; then
+            echo "Arquivo pr-ref.txt encontrado."
+          else
+            echo "Arquivo pr-ref.txt NÃO encontrado."
+          fi
           
       - name: Baixar artefato com versão e ref
         uses: actions/download-artifact@v3
