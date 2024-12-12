@@ -56,8 +56,16 @@ jobs:
           # Exporta BRANCH_ORIGEM como variável de ambiente para ser usado nas próximas etapas
           echo "BRANCH_ORIGEM=$BRANCH_ORIGEM" >> $GITHUB_ENV
           
-          # Exporta base_ref como variável de ambiente para ser usado nas próximas etapas
-          echo "BRANCH_DESTINO=${{ github.base_ref }}" >> $GITHUB_ENV          
+          # Determinando a branch base
+          if [ -n "${{ github.event.pull_request }}" ]; then
+            # Se for um PR, usamos o base ref (branch de destino do PR)
+            BRANCH_DESTINO="${{ github.base_ref }}"
+          else
+            # Se não for PR, define a branch destino para uma valor fixo ou usa a branch de onde o workflow foi executado
+            BRANCH_DESTINO=${GITHUB_REF##*/}
+          fi
+          
+          echo "BRANCH_DESTINO=$BRANCH_DESTINO" >> $GITHUB_ENV  
         
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
