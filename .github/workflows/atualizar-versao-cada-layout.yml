@@ -33,28 +33,37 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
        
+
       - name: Listar todas as execuções de workflows e extrair o nome da branch
         run: |
-          # Listar todas as execuções de workflow no repositório, filtrando pelo nome do workflow e o status
+          # Lista todas as execuções de workflow no repositório, filtrando pelo nome do workflow e pelo status de sucesso
           workflow_runs=$(gh run list --repo ${{ github.repository }} --workflow "Criar Artefato com Nome da Branch" --json headBranch,status,conclusion -q 'map(select(.status == "completed" and .conclusion == "success")) | .[].headBranch')
           
           # Exibe o resultado da lista para debug
           echo "Execuções de workflow 'Criar Artefato com Nome da Branch' bem-sucedidas encontradas: $workflow_runs"
           
-          # Se não encontrar nada, mostre uma mensagem e saia com erro
+          # Verifica se a variável workflow_runs contém algum valor
           if [ -z "$workflow_runs" ]; then
             echo "Nenhuma execução bem-sucedida do workflow 'Criar Artefato com Nome da Branch' foi encontrada."
             exit 1
           fi
           
+          # Garantir que workflow_runs seja um array JSON válido
+          # Envolvendo o conteúdo em uma estrutura de array
+          workflow_runs_json="[$workflow_runs]"
+          
+          # Exibe o JSON formatado para depuração
+          echo "Formato JSON de execução de workflows: $workflow_runs_json"
+          
           # Extrai o nome da primeira branch (caso haja execuções)
-          BRANCH_NAME=$(echo "$workflow_runs" | jq -r '.[0]')
+          BRANCH_NAME=$(echo "$workflow_runs_json" | jq -r '.[0]')
           
           # Exibe o nome da branch extraído
           echo "Nome da branch extraído: $BRANCH_NAME"
         
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usando o token correto para autenticação
+
 
           
       
