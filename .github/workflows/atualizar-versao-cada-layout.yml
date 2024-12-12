@@ -36,8 +36,8 @@ jobs:
 
       - name: Listar todas as execuções de workflows e extrair o nome da branch
         run: |
-          # Lista todas as execuções de workflow no repositório, filtrando pelo nome do workflow e pelo status de sucesso
-          workflow_runs=$(gh run list --repo ${{ github.repository }} --workflow "Criar Artefato com Nome da Branch" --json headBranch,status,conclusion -q 'map(select(.status == "completed" and .conclusion == "success")) | .[].headBranch')
+          # Lista todas as execuções de workflow no repositório, filtrando pelo nome do workflow e pelo status de sucesso 
+          workflow_runs=$(gh run list --repo ${{ github.repository }} --workflow "Criar Artefato com Nome da Branch" --json headBranch,status,conclusion -q 'map(select(.status == "completed" and .conclusion == "success")) | .[].headBranch' | sort -u | head -n 1)
           
           # Exibe o resultado da lista para debug
           echo "Execuções de workflow 'Criar Artefato com Nome da Branch' bem-sucedidas encontradas: $workflow_runs"
