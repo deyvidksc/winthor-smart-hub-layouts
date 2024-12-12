@@ -27,38 +27,27 @@ jobs:
         run: |
           pip install gitpython
 
-      # Verificar artefatos
-      - name: Verificar artefatos
-        run: |
-          echo "Verificando artefatos no diretório atual:"
-          ls -lh
-          echo "Tentando acessar o artefato pr-branch-name-artifact"
-          if [ -f /tmp/artifacts/branch-name.txt ]; then
-            echo "Arquivo branch-name.txt encontrado."
-          else
-            echo "Arquivo branch-name.txt NÃO encontrado."
-          fi
-
-      # Baixar artefato com nome da branch
-      - name: Baixar artefato com nome da branch
+      - name: Baixar artefato com o nome da branch
         uses: actions/download-artifact@v3
         with:
-          name: pr-branch-name-artifact
+          name: branch-name-artifact  # Nome do artefato
 
-      - name: Lendo o ref do PR
+      - name: Verificar o conteúdo do artefato
         run: |
-          if [ -f /tmp/artifacts/branch-name.txt ]; then
-            PR_REF=$(cat /tmp/artifacts/branch-name.txt)
-            echo "PR Ref extraído: $PR_REF"
+          if [ -f branch-name.txt ]; then
+            BRANCH_NAME=$(cat branch-name.txt)
+            echo "Nome da branch extraído: $BRANCH_NAME"
           else
-            echo "Arquivo branch-name.txt não encontrado após o download."
-          fi      
+            echo "O arquivo branch-name.txt não foi encontrado!"
+            exit 1
+          fi
+
 
       - name: Debug GitHub context
         run: |
           echo "GitHub Token: ${{ secrets.GH_TOKEN }}"
-          echo "Pull Request Head Ref: $PR_REF
+          echo "Pull Request Head Ref: $BRANCH_NAME
           echo "Base Ref (branch de destino): ${{ github.base_ref }}"          
       - name: Run script atualizar-versao-cada-layout
         #run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} ${{ github.head_ref }} ${{ github.base_ref }}
-        run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} $PR_REF ${{ github.base_ref }}
+        run: python scripts/atualizar-versao-cada-layout.py ${{ secrets.GH_TOKEN }} $BRANCH_NAME ${{ github.base_ref }}
