@@ -17,11 +17,11 @@ jobs:
       - name: Criar arquivo com o nome da branch
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"  # Nome da branch de origem do PR
-          echo "$BRANCH_NAME" > "${{ github.workspace }}/branch-name.txt"  # Criando o arquivo com o nome da branch
+          echo "$BRANCH_NAME" > branch-name.txt  # Criando o arquivo com o nome da branch
           echo "Nome da branch: $BRANCH_NAME"  # Exibindo no log para depuração
 
       - name: Fazer upload do artefato com o nome da branch
         uses: actions/upload-artifact@v3
         with:
           name: branch-name-artifact  # Nome do artefato
-          path: "${{ github.workspace }}/branch-name.txt"  # Caminho completo do arquivo
+          path: branch-name.txt       # Caminho do arquivo criado (no diretório de trabalho atual)
