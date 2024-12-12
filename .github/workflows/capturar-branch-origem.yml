@@ -16,7 +16,7 @@ jobs:
 
       - name: Salvar nome da branch na raiz
         run: |
-          echo "${{ github.head_ref }}" > "/branch-name.txt"
+          echo "${{ github.head_ref }}" > "~/branch-name.txt"
 
       # Passo 4: Commit e push do arquivo, se houver alterações
       - name: Commit e push do arquivo
