@@ -14,7 +14,7 @@ permissions:
   contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório
   
 jobs:
-  capture-branch:
+  executa-script-py:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
