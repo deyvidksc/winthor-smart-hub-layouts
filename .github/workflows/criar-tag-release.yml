@@ -1,5 +1,4 @@
 name: Criar Tag e Release
-
 on:
   #workflow_run:
    # workflows: ["CI/CD - Registrar Arquivos Modificados"]
