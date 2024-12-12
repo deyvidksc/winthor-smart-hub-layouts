@@ -23,7 +23,16 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
     diffs = commit1.diff(commit2)
     return len(diffs) > 0  # Retorna True se houver diferenças
 
-# Função para atualizar o arquivo versao.json
+# Função para ler a versão de version.txt
+def get_version_from_file():
+    if not os.path.exists("version.txt'):
+        print(f"Arquivo {version_file_path} não encontrado.")
+        return None
+
+    with open('version.txt', 'r') as file:
+        return file.read().strip()
+
+# Função para atualizar o arquivo versao.json com a versão de version.txt
 def update_version_json(directory):
     version_file_path = os.path.join(directory, 'versao.json')
 
@@ -34,24 +43,46 @@ def update_version_json(directory):
     with open(version_file_path, 'r') as f:
         data = json.load(f)
 
-    # Incrementar a versão
-    current_version = data.get('versao', '1.0.0.0')
-    new_version = increment_version(current_version)
-    data['versao'] = new_version
+     versao = get_version_from_file()
+     print(f"versao do arquivo {versao}.")
 
-    # Atualizar o JSON
+    # Definindo a versão obtida de version.txt
+    data['versao'] = versao
+
+    # Atualizar o arquivo JSON
     with open(version_file_path, 'w') as f:
         json.dump(data, f, indent=4)
 
-    print(f"Versão atualizada para {new_version} no arquivo versao.json em {directory}")
+    print(f"Versão atualizada para {version} no arquivo versao.json em {directory}")
+# Função para atualizar o arquivo versao.json
+# def update_version_json(directory):
+#     version_file_path = os.path.join(directory, 'versao.json')
 
-# Função para incrementar a versão
-def increment_version(version):
-    version_parts = version.split('.')
-    build = int(version_parts[3])
-    build += 1
-    version_parts[3] = str(build)
-    return '.'.join(version_parts)
+#     if not os.path.exists(version_file_path):
+#         print(f"Arquivo versao.json não encontrado em {directory}.")
+#         return
+
+#     with open(version_file_path, 'r') as f:
+#         data = json.load(f)
+
+#     # Incrementar a versão
+#     current_version = data.get('versao', '1.0.0.0')
+#     new_version = increment_version(current_version)
+#     data['versao'] = new_version
+
+#     # Atualizar o JSON
+#     with open(version_file_path, 'w') as f:
+#         json.dump(data, f, indent=4)
+
+#     print(f"Versão atualizada para {new_version} no arquivo versao.json em {directory}")
+
+# # Função para incrementar a versão
+# def increment_version(version):
+#     version_parts = version.split('.')
+#     build = int(version_parts[3])
+#     build += 1
+#     version_parts[3] = str(build)
+#     return '.'.join(version_parts)
 
 # Função para fazer commit e push das alterações
 def commit_and_push(repo, branch, token):
