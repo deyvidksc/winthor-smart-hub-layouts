@@ -13,19 +13,6 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
-
-      # - name: Criar arquivo com o nome da branch
-      #   run: |
-      #     BRANCH_NAME="${{ github.event.pull_request.head.ref }}"  # Nome da branch de origem do PR
-      #     echo "$BRANCH_NAME" > ".github/branch-name.txt"  # Criando o arquivo com o nome da branch
-      #     echo "Nome da branch: $BRANCH_NAME"  # Exibindo no log para depuração
- 
-      # - name: Fazer upload do artefato com o nome da branch
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: branch-name-artifact  # Nome do artefato
-      #     path: "branch-name.txt"      # Caminho do arquivo criado (no diretório de trabalho atual)
- 
  
       - name: Criar diretório temporário
         run: mkdir -p temp/  # Cria o diretório temp se não existir
@@ -38,7 +25,3 @@ jobs:
         with:
           name: branch-name-artifact  # Nome do artefato
           path: "temp/branch-name.txt"  # Caminho do arquivo a ser enviado como artefato
-
-
-
-    
