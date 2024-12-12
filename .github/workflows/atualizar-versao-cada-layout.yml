@@ -3,7 +3,7 @@ name: Atualizar Versão de Cada Layout
 on:
   workflow_run:
     workflows: ["Criar Tag e Release"]
-    types: [completed, success]
+    types: [completed]
   pull_request:
     #types: [opened, synchronize, reopened]
     types: [closed]
