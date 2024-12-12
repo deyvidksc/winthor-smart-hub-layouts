@@ -17,7 +17,7 @@ on:
   #    - '**/*'
 
 permissions:
-  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório      
+  contents: write  # Permite ao GITHUB_TOKEN fazer push para o repositório       
 
 jobs:
   update-version:
@@ -30,13 +30,12 @@ jobs:
         uses: actions/checkout@v3
 
 
-      # Passo 2: Verificar se o arquivo branch-name.txt existe
-      - name: Verificar se o arquivo branch-name.txt existe
+      - name: Verificar se o arquivo já existe
         run: |
-          if [ -f branch-name.txt ]; then
-            echo "Arquivo branch-name.txt encontrado!"
+          if [ -f "$GITHUB_WORKSPACE/branch-name.txt" ]; then
+            echo "$(date +'%Y-%m-%d %H:%M:%S') - Arquivo branch-name.txt encontrado para a branch ${{ github.head_ref }}."
           else
-            echo "Erro: Arquivo branch-name.txt não encontrado!"
+            echo "$(date +'%Y-%m-%d %H:%M:%S') - ERRO: Arquivo branch-name.txt não encontrado para a branch ${{ github.head_ref }}." >> $GITHUB_WORKSPACE/error.log
             exit 1
           fi
 
@@ -45,7 +44,7 @@ jobs:
         id: read-branch-name
         run: |
           # Verifique se o arquivo contém o nome da branch
-          BRANCH_ORIGIN_NAME=$(cat branch-name.txt)
+          BRANCH_ORIGIN_NAME=$(cat "$GITHUB_WORKSPACE/branch-name.txt")
           echo "Nome da branch de origem do PR: '$BRANCH_ORIGIN_NAME'"
 
           # Adicionando mais verificações para depuração
