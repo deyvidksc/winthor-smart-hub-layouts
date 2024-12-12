@@ -6,7 +6,7 @@ on:
     types: [success]  # Executa quando o workflow "Criar Tag e Release" for completado (independentemente de sucesso ou falha)
     
   pull_request:
-    types: [closed]  # Evento disparado quando o PR é fechado
+    #types: [closed]  # Evento disparado quando o PR é fechado
     branches: 
       - main
       - develop  # Filtra as branches de destino (main ou develop)
