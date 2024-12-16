@@ -44,8 +44,17 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
     return False  # Caso não haja diferenças entre os commits
 
 
+def get_commit_from_branch(repo, branch_name): 
+    # Obtendo o commit mais recente do branch especificado
+    return repo.commit(branch_name)
+
+def prepare_tree_parser(repo, commit): 
+    # Obtendo a árvore do commit (representação dos arquivos)
+    tree = commit.tree
+    return repo.git.cat_file('commit', commit.hexsha + "^{tree}")
+
 def has_changes_in_directory(repo, trunk_branch, current_branch, directory):
-    # Obtendo os commits dos branches
+   # Obtendo os commits dos branches
     commit_trunk = get_commit_from_branch(repo, trunk_branch)
     commit_current = get_commit_from_branch(repo, current_branch)
 
