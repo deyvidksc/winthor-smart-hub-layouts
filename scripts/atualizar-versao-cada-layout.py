@@ -11,7 +11,7 @@ def clone_repo(repo_url, token, local_dir):
     return repo
 
 # Função para verificar se há diferenças entre dois branches
-def has_diff_between_branches(repo, trunk_branch, current_branch):
+def has_changes_in_directory(repo, trunk_branch, current_branch, directory):
     # Acessando os branches remotos explicitamente
     branch1 = f'refs/remotes/origin/{trunk_branch}'  # Se for um branch remoto
     branch2 = f'refs/remotes/origin/{current_branch}'  # Se for um branch remoto
@@ -36,28 +36,12 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
     for commit1 in commits1:
         for commit2 in commits2:
             # Obtendo as diferenças entre os commits
-            diffs = commit1.diff(commit2)
+            diffs = commit1.diff(commit2, paths=directory)
             if diffs:
                 return True  # Se houver qualquer diferença, retorna True
 
     return False  # Caso não haja diferenças entre os commits
-    
-    
-    
-def has_changes_in_directory(repo, trunk_branch, current_branch, directory):
-    # Acessando os branches remotos diretamente
-    branch_trunk = f'refs/remotes/origin/{trunk_branch}'
-    branch_current = f'refs/remotes/origin/{current_branch}'
-
-    # Obtendo os commits dos branches remotos
-    commit_trunk = repo.commit(branch_trunk)
-    commit_current = repo.commit(branch_current)
-
-    # Obtendo a diferença entre os dois commits para o diretório especificado
-    diffs = commit_trunk.diff(commit_current, paths=directory)
-
-    # Se houver qualquer diferença, retorna True (alterações encontradas)
-    return len(diffs) > 0
+     
     
  
 # Função para ler a versão de version.txt
@@ -158,8 +142,8 @@ def main():
     repo = clone_repo(repo_url, token, local_folder)
 
     # Verificar diferenças entre os branches
-    if has_diff_between_branches(repo, trunk_branch, current_branch):
-        print(f"O branch '{current_branch}' tem diferenças em relação ao '{trunk_branch}'.")
+    #if has_diff_between_branches(repo, trunk_branch, current_branch):
+     #   print(f"O branch '{current_branch}' tem diferenças em relação ao '{trunk_branch}'.")
 
         # Iterar pelas pastas e atualizar o versao.json
         for dirpath, dirnames, filenames in os.walk(local_folder):
