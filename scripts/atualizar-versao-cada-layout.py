@@ -293,8 +293,9 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     # Garantir que o branch de origem remoto esteja correto (checkout direto no branch remoto)
     print(f"Fazendo checkout no branch remoto {branch_origem}...")
     try:
-        # Faz o checkout no branch remoto
-        repo.git.checkout(f"origin/{branch_origem}")
+        # Criar um novo branch local que acompanha o branch remoto
+        repo.git.checkout('-b', branch_origem, f'origin/{branch_origem}')
+        repo.git.pull()
     except git.exc.GitCommandError as e:
         print(f"Erro ao fazer checkout no branch remoto {branch_origem}: {e}")
         sys.exit(1)
