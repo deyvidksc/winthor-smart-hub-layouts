@@ -268,8 +268,8 @@ def main():
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
 
-
-    modified_folders = get_changed_folders(repo, origin_branch, base_branch)#compare_commits_and_folders(repo, origin_branch, base_branch)
+    # --compare_commits_and_folders(repo, origin_branch, base_branch)
+    modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
 
     if modified_folders:
         print(f"As seguintes pastas foram alteradas entre os branches '{origin_branch}' e '{base_branch}':")
