@@ -221,66 +221,21 @@ def commit_and_push(repo, branch, token):
     # Realiza o push para o branch remoto
     origin.push(refspec=f"{branch}:{branch}")
 
-   
- 
-def get_changed_folders(repo_path, origin_branch, base_branch):
-    """
-    Executa git diff para obter as pastas alteradas entre dois branches
-    e retorna as pastas modificadas.
-    """
-    try:
-
-
-        # Agora, execute o git diff para obter as diferenças entre os branches remotos
-        print(f"Comparando os branches remotos {origin_branch} e {base_branch}...")
-        result = subprocess.run(
-            ['git', 'diff', f'origin/{origin_branch}..origin/{base_branch}', '--name-only'],
-            cwd=repo_path,  # Diretório do repositório
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-
-        # Captura a saída e divide por linhas
-        changed_files = result.stdout.strip().splitlines()
-
-        # Extrai as pastas dos arquivos alterados
-        changed_folders = set(file.split('/')[0] for file in changed_files)
-
-        return changed_folders
-
-    except subprocess.CalledProcessError as e:
-        print(f"Erro ao executar git diff: {e.stderr}")
-        return set()
- 
- 
- 
-def checkout_branch(repo, branch_name, repo_path):
-    """
-    Faz o checkout para o branch especificado em um repositório clonado.
-    """
-    try:
-        # Primeiro, faça o fetch para garantir que você tem as últimas atualizações dos branches remotos
-        print("Atualizando os branches remotos...")
-        subprocess.run(['git', 'fetch'], cwd=repo_path, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        # Verifica se o branch já existe localmente
-        if branch_name not in repo.branches:
-            # Caso não exista localmente, cria um tracking branch para o branch remoto
-            print(f"Branch {branch_name} não encontrado localmente. Fazendo o checkout para o branch remoto.")
-            repo.git.checkout(f'origin/{branch_name}')
-        else:
-            # Faz o checkout para o branch local
-            print(f"Fazendo checkout para o branch {branch_name}.")
-            repo.git.checkout(branch_name)
-    except Exception as e:
-        print(f"Erro ao fazer checkout para o branch {branch_name}: {e}")
-        raise 
- 
  
 # Função para comparar as diferenças entre os branches
 def comparar_diferencas(repo, branch_base, branch_origem):
+
+    # Listar branches locais
+    print("Branches locais:")
+    for branch in repo.branches:
+        print(f"- {branch.name}")
+
+    # Listar branches remotos
+    print("\nBranches remotos:")
+    for remote in repo.remotes:
+        for ref in remote.refs:
+            print(f"- {ref.name}")
+
     # Atualizar os branches remotos
     print(f"Atualizando o repositório...")
     repo.git.fetch()
@@ -300,11 +255,6 @@ def comparar_diferencas(repo, branch_base, branch_origem):
         print(f"Erro ao fazer checkout no branch remoto {branch_origem}: {e}")
         sys.exit(1)
 
-    # Listar branches locais
-    print("Branches locais:")
-    for branch in repo.branches:
-        print(f"- {branch.name}")
-
     # Verificar o estado atual do repositório
     print(f"Estado atual do repositório:")
 
@@ -318,7 +268,7 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Branch de origem: {branch_origem}")
 
     # Comparando as diferenças entre o branch base (local) e o branch de origem (remoto)
-    print(f"Comparando {branch_base} com origin/{branch_origem}...")
+    print(f"Comparando {branch_base} com {branch_origem}...")
     diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
 
     if diff:
@@ -326,9 +276,15 @@ def comparar_diferencas(repo, branch_base, branch_origem):
         # Filtrar apenas pastas (diretórios)
         dirs = set()
         for line in diff.splitlines():
-            # Verifica se o item é uma pasta, ou seja, se o caminho termina com '/'
-            if line.endswith('/'):
+            # Verifica se o item é uma pasta (diretório)
+            if line.endswith('/'):  # Verifica se o caminho termina com '/'
                 dirs.add(line)
+            else:
+                # Adiciona o diretório pai se for um arquivo dentro de um diretório
+                dir_name = os.path.dirname(line)
+                if dir_name:
+                    dirs.add(dir_name + '/')
+
         if dirs:
             print("Pastas com diferenças:")
             for dir in dirs:
@@ -337,6 +293,33 @@ def comparar_diferencas(repo, branch_base, branch_origem):
             print("Nenhuma pasta com diferenças encontrada.")
     else:
         print(f'Não há diferenças entre {branch_base} e {branch_origem}.')
+        
+        
+# Função para comparar as diferenças entre os branches
+def compare_differ(repo, branch_base, branch_origem):
+    print(f"Comparando {branch_base} com {branch_origem}...")
+    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
+
+    modified_folders = set()
+    if diff:
+        print(f'Diferenças encontradas entre {branch_base} e {branch_origem}:')
+        # Filtrar pastas (diretórios)
+        for line in diff.splitlines():
+            if line.endswith('/'):
+                modified_folders.add(line)
+            else:
+                # Adiciona o diretório pai se for um arquivo dentro de um diretório
+                dir_name = os.path.dirname(line)
+                if dir_name:
+                    modified_folders.add(dir_name + '/')
+        if modified_folders:
+            print(f"Pastas com alterações: {modified_folders}")
+        else:
+            print("Nenhuma pasta com diferenças encontrada.")
+    else:
+        print(f'Não há diferenças entre {branch_base} e {branch_origem}.')
+    
+    return modified_folders        
         
 # Função principal
 def main():
@@ -354,47 +337,28 @@ def main():
 
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
-    
-    # Listar branches locais
-    print("Branches locais:")
-    for branch in repo.branches:
-        print(f"- {branch.name}")
 
-    # Listar branches remotos
-    print("\nBranches remotos:")
-    for remote in repo.remotes:
-        for ref in remote.refs:
-            print(f"- {ref.name}")
     
     comparar_diferencas(repo, base_branch, origin_branch)
     #checkout_branch(repo, origin_branch, local_folder)
-    
-    # --compare_commits_and_folders(repo, origin_branch, base_branch)
-    modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
-
-    if modified_folders:
-        print(f"As seguintes pastas foram alteradas entre os branches '{origin_branch}' e '{base_branch}':")
-        for folder in modified_folders:
-            print(f"- {folder}")
-    else:
-        print(f"Não houve alterações nas pastas entre os branches '{origin_branch}' e '{base_branch}'.")
-
-
+     modified_folders = compare_differ(repo, base_branch, origin_branch);
     # Verificar diferenças entre os branches
-    if has_diff_between_branches(repo, origin_branch, base_branch):
+    #if has_diff_between_branches(repo, origin_branch, base_branch):
+    if modified_folders:
         print(f"O branch '{origin_branch}' tem diferenças em relação ao '{base_branch}'.")
  
         try:               
             # Iterar pelas pastas e atualizar o versao.json
-            for dirpath, dirnames, filenames in os.walk(local_folder):
+            #for dirpath, dirnames, filenames in os.walk(local_folder):
                 # Verificando se o diretório contém um arquivo versao.json
-                if 'versao.json' in filenames:
-                    print(f"Verificando alterações na pasta: {dirpath}")
+                #if 'versao.json' in filenames:
+                   # print(f"Verificando alterações na pasta: {dirpath}")
                     # Verificando se houve alterações no diretório entre os dois branches remotos
-                    if has_changes_in_directory(repo, origin_branch, base_branch, dirpath):
-                        print(f"Alterações detectadas em: {dirpath}")
-                        # Se houver alterações, atualizar o versao.json
-                        update_version_json(dirpath)       
+                    #if has_changes_in_directory(repo, origin_branch, base_branch, dirpath):
+            for dirpath in modified_folders:        
+                print(f"Alterações detectadas em: {dirpath}")
+                # Se houver alterações, atualizar o versao.json
+                update_version_json(dirpath)       
         except Exception as e:
             print(f"Erro: {e}")
             sys.exit(1)
