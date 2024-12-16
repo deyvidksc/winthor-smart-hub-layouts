@@ -43,38 +43,21 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
 
     return False  # Caso não haja diferenças entre os commits
 
-# Função para verificar se há diferenças entre dois branches
+
 def has_changes_in_directory(repo, trunk_branch, current_branch, directory):
-    # Acessando os branches remotos explicitamente
-    branch1 = f'refs/remotes/origin/{trunk_branch}'  # Se for um branch remoto
-    branch2 = f'refs/remotes/origin/{current_branch}'  # Se for um branch remoto
-    
-    # Obtendo os commits de cada branch
-    commits1 = list(repo.iter_commits(branch1))
-    commits2 = list(repo.iter_commits(branch2))
-    
-    # Criando sets para facilitar a comparação
-    commits1_set = set(commit.hexsha for commit in commits1)
-    commits2_set = set(commit.hexsha for commit in commits2)
+    # Obtendo os commits dos branches
+    commit_trunk = get_commit_from_branch(repo, trunk_branch)
+    commit_current = get_commit_from_branch(repo, current_branch)
 
-    # Encontrando commits exclusivos para cada branch
-    unique_commits1 = commits1_set - commits2_set
-    unique_commits2 = commits2_set - commits1_set
+    # Preparando os TreeParsers para os commits
+    old_tree = prepare_tree_parser(repo, commit_trunk)
+    new_tree = prepare_tree_parser(repo, commit_current)
 
-    # Se houver commits exclusivos, significa que há diferenças
-    if unique_commits1 or unique_commits2:
-        return True
+    # Comparando os diffs entre os dois commits no diretório especificado
+    diffs = repo.git.diff(old_tree, new_tree, '--', directory)
 
-    # Caso não tenha commits exclusivos, comparando as diferenças nos arquivos dos commits
-    for commit1 in commits1:
-        for commit2 in commits2:
-            # Obtendo as diferenças entre os commits
-            diffs = commit1.diff(commit2, paths=directory)
-            if diffs:
-                return True  # Se houver qualquer diferença, retorna True
-
-    return False  # Caso não haja diferenças entre os commits
-     
+    # Se houver qualquer diferença, retorna True
+    return bool(diffs.strip())  # Se a string de diffs não estiver vazia, significa que há diferenças
     
  
 # Função para ler a versão de version.txt
