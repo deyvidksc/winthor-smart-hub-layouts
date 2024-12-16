@@ -44,14 +44,14 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
     
     
     
-def has_changes_in_directory(git_repo, trunk_branch, current_branch, directory):
+def has_changes_in_directory(repo, trunk_branch, current_branch, directory):
     # Acessando os branches remotos diretamente
     branch_trunk = f'refs/remotes/origin/{trunk_branch}'
     branch_current = f'refs/remotes/origin/{current_branch}'
 
     # Obtendo os commits dos branches remotos
-    commit_trunk = git_repo.commit(branch_trunk)
-    commit_current = git_repo.commit(branch_current)
+    commit_trunk = repo.commit(branch_trunk)
+    commit_current = repo.commit(branch_current)
 
     # Obtendo a diferença entre os dois commits para o diretório especificado
     diffs = commit_trunk.diff(commit_current, paths=directory)
@@ -167,7 +167,7 @@ def main():
             if 'versao.json' in filenames:
                 print(f"Verificando alterações na pasta: {dirpath}")
                 # Verificando se houve alterações no diretório entre os dois branches remotos
-                if has_changes_in_directory(git_repo, trunk_branch, current_branch, dirpath):
+                if has_changes_in_directory(repo, trunk_branch, current_branch, dirpath):
                     print(f"Alterações detectadas em: {dirpath}")
                     # Se houver alterações, atualizar o versao.json
                     update_version_json(dirpath)
