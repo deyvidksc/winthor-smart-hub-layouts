@@ -45,13 +45,19 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
 
 
 def get_commit_from_branch(repo, branch_name): 
-    # Obtendo o commit mais recente do branch especificado
-    return repo.commit(branch_name)
+    # Usar a referência completa para o branch remoto
+    try:
+        commit = repo.commit(f'refs/remotes/origin/{branch_name}')
+    except Exception as e:
+        print(f"Erro ao acessar o commit do branch {branch_name}: {e}")
+        raise
+    return commit
 
 def prepare_tree_parser(repo, commit): 
     # Obtendo a árvore do commit (representação dos arquivos)
     tree = commit.tree
     return repo.git.cat_file('commit', commit.hexsha + "^{tree}")
+
 
 def has_changes_in_directory(repo, trunk_branch, current_branch, directory):
    # Obtendo os commits dos branches
