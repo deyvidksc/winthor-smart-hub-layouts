@@ -223,6 +223,35 @@ def commit_and_push(repo, branch, token):
 
    
  
+def get_changed_folders(repo_path, branch1, branch2):
+    """
+    Executa git diff para obter as pastas alteradas entre dois branches
+    e retorna as pastas modificadas.
+    """
+    try:
+        # Comando git diff para obter os arquivos modificados entre dois branches
+        result = subprocess.run(
+            ['git', 'diff', f'{branch1}..{branch2}', '--name-only'],
+            cwd=repo_path,  # Diretório do repositório
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        # Captura a saída e divide por linhas
+        changed_files = result.stdout.strip().splitlines()
+
+        # Extrai as pastas dos arquivos alterados
+        changed_folders = set(file.split('/')[0] for file in changed_files)
+
+        return changed_folders
+
+    except subprocess.CalledProcessError as e:
+        print(f"Erro ao executar git diff: {e.stderr}")
+        return set()
+ 
+ 
 # Função principal
 def main():
     if len(sys.argv) < 4:
@@ -240,7 +269,7 @@ def main():
     repo = clone_repo(repo_url, token, local_folder)
 
 
-    modified_folders = compare_commits_and_folders(repo, origin_branch, base_branch)
+    modified_folders = get_changed_folders(repo, origin_branch, base_branch)#compare_commits_and_folders(repo, origin_branch, base_branch)
 
     if modified_folders:
         print(f"As seguintes pastas foram alteradas entre os branches '{origin_branch}' e '{base_branch}':")
