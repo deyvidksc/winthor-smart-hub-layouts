@@ -285,12 +285,23 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Atualizando o repositório...")
     repo.git.fetch()
 
-    # Fazer o checkout no branch de origem
+    # Garantir que o branch base esteja correto
+    print(f"Fazendo checkout no branch {branch_base}...")
+    repo.git.checkout(branch_base)
+    repo.git.pull()
+
+    # Garantir que o branch de origem esteja correto
     print(f"Fazendo checkout no branch {branch_origem}...")
     repo.git.checkout(f"origin/{branch_origem}")
+    repo.git.pull()
 
-    # Obter as diferenças com o branch base
-    print(f"Comparando {branch_origem} com {branch_base}...")
+    # Verificar o estado atual do repositório
+    print(f"Estado atual do repositório:")
+    print(f"Branch base: {repo.active_branch}")
+    print(f"Branch de origem: origin/{branch_origem}")
+
+    # Comparando as diferenças entre o branch base e o branch de origem
+    print(f"Comparando {branch_base} com origin/{branch_origem}...")
     diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
 
     if diff:
@@ -329,7 +340,7 @@ def main():
     #checkout_branch(repo, origin_branch, local_folder)
     
     # --compare_commits_and_folders(repo, origin_branch, base_branch)
-    #modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
+    modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
 
     if modified_folders:
         print(f"As seguintes pastas foram alteradas entre os branches '{origin_branch}' e '{base_branch}':")
