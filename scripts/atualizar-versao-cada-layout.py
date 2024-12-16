@@ -280,29 +280,33 @@ def checkout_branch(repo, branch_name, repo_path):
  
  
 # Função para comparar as diferenças entre os branches
-def comparar_diferencas(repo, branch_origem, branch_base ):
+def comparar_diferencas(repo, branch_base, branch_origem):
     # Atualizar os branches remotos
     print(f"Atualizando o repositório...")
     repo.git.fetch()
 
     # Garantir que o branch base esteja correto
-    #print(f"Fazendo checkout no branch {branch_base}...")
-    #repo.git.checkout(branch_base)
-    #repo.git.pull()
-
-    # Garantir que o branch de origem esteja correto
-    print(f"Fazendo checkout no branch {branch_origem}...")
-    repo.git.checkout(f"origin/{branch_origem}")
+    print(f"Fazendo checkout no branch {branch_base}...")
+    repo.git.checkout(branch_base)
     repo.git.pull()
+
+    # Garantir que o branch de origem remoto esteja correto (checkout direto no branch remoto)
+    print(f"Fazendo checkout no branch remoto {branch_origem}...")
+    try:
+        # Faz o checkout no branch remoto
+        repo.git.checkout(f"origin/{branch_origem}")
+    except git.exc.GitCommandError as e:
+        print(f"Erro ao fazer checkout no branch remoto {branch_origem}: {e}")
+        sys.exit(1)
 
     # Verificar o estado atual do repositório
     print(f"Estado atual do repositório:")
     print(f"Branch base: {repo.active_branch}")
-    print(f"Branch de origem: origin/{branch_origem}")
+    print(f"Branch de origem: {branch_origem}")
 
-    # Comparando as diferenças entre o branch base e o branch de origem
-    print(f"Comparando {branch_origem} com origin/{branch_base}...")
-    diff = repo.git.diff(f"{branch_origem}..origin/{branch_base}", '--name-only')
+    # Comparando as diferenças entre o branch base (local) e o branch de origem (remoto)
+    print(f"Comparando {branch_base} com origin/{branch_origem}...")
+    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
 
     if diff:
         print(f'Diferenças encontradas entre {branch_base} e origin/{branch_origem}:')
