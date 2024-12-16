@@ -278,6 +278,37 @@ def checkout_branch(repo, branch_name, repo_path):
         print(f"Erro ao fazer checkout para o branch {branch_name}: {e}")
         raise 
  
+ 
+# Função para comparar as diferenças entre os branches
+def comparar_diferencas(repo, branch_base, branch_origem):
+    # Atualizar os branches remotos
+    print(f"Atualizando o repositório...")
+    repo.git.fetch()
+
+    # Fazer o checkout no branch de origem
+    print(f"Fazendo checkout no branch {branch_origem}...")
+    repo.git.checkout(f"origin/{branch_origem}")
+
+    # Obter as diferenças com o branch base
+    print(f"Comparando {branch_origem} com {branch_base}...")
+    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
+
+    if diff:
+        print(f'Diferenças encontradas entre {branch_base} e origin/{branch_origem}:')
+        # Filtrar apenas pastas (diretórios)
+        dirs = set()
+        for line in diff.splitlines():
+            if os.path.isdir(line):
+                dirs.add(line)
+        if dirs:
+            print("Pastas com diferenças:")
+            for dir in dirs:
+                print(f"- {dir}")
+        else:
+            print("Nenhuma pasta com diferenças encontrada.")
+    else:
+        print(f'Não há diferenças entre {branch_base} e origin/{branch_origem}.')
+        
 # Função principal
 def main():
     if len(sys.argv) < 4:
@@ -291,13 +322,14 @@ def main():
     repo_url = "https://github.com/deyvidksc/winthor-smart-hub-layouts.git"
     local_folder = "/tmp/git_repo"  # Defina o diretório local onde o repositório será clonado
 
+
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
-    
-    checkout_branch(repo, origin_branch, local_folder)
+    comparar_diferencas(repo, base_branch, origin_branch)
+    #checkout_branch(repo, origin_branch, local_folder)
     
     # --compare_commits_and_folders(repo, origin_branch, base_branch)
-    modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
+    #modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
 
     if modified_folders:
         print(f"As seguintes pastas foram alteradas entre os branches '{origin_branch}' e '{base_branch}':")
