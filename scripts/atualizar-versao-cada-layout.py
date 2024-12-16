@@ -336,6 +336,18 @@ def main():
 
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
+    
+    # Listar branches locais
+    print("Branches locais:")
+    for branch in repo.branches:
+        print(f"- {branch.name}")
+
+    # Listar branches remotos
+    print("\nBranches remotos:")
+    for remote in repo.remotes:
+        for ref in remote.refs:
+            print(f"- {ref.name}")
+    
     comparar_diferencas(repo, base_branch, origin_branch)
     #checkout_branch(repo, origin_branch, local_folder)
     
