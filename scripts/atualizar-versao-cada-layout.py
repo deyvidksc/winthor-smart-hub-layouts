@@ -229,9 +229,7 @@ def get_changed_folders(repo_path, origin_branch, base_branch):
     e retorna as pastas modificadas.
     """
     try:
-        # Primeiro, faça o fetch para garantir que você tem as últimas atualizações dos branches remotos
-        print("Atualizando os branches remotos...")
-        subprocess.run(['git', 'fetch'], cwd=repo_path, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
 
         # Agora, execute o git diff para obter as diferenças entre os branches remotos
         print(f"Comparando os branches remotos {origin_branch} e {base_branch}...")
@@ -263,6 +261,10 @@ def checkout_branch(repo, branch_name):
     Faz o checkout para o branch especificado em um repositório clonado.
     """
     try:
+        # Primeiro, faça o fetch para garantir que você tem as últimas atualizações dos branches remotos
+        print("Atualizando os branches remotos...")
+        subprocess.run(['git', 'fetch'], cwd=repo_path, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
         # Verifica se o branch já existe localmente
         if branch_name not in repo.branches:
             # Caso não exista localmente, cria um tracking branch para o branch remoto
@@ -292,7 +294,7 @@ def main():
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
     
-    #checkout_branch(repo, origin_branch)
+    checkout_branch(repo, origin_branch)
     
     # --compare_commits_and_folders(repo, origin_branch, base_branch)
     modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
