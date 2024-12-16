@@ -299,6 +299,12 @@ def comparar_diferencas(repo, branch_base, branch_origem):
         print(f"Erro ao fazer checkout no branch remoto {branch_origem}: {e}")
         sys.exit(1)
 
+
+    # Listar branches locais
+    print("Branches locais:")
+    for branch in repo.branches:
+        print(f"- {branch.name}")
+
     # Verificar o estado atual do repositório
     print(f"Estado atual do repositório:")
 
