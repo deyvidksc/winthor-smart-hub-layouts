@@ -172,7 +172,7 @@ def commit_and_push(repo, branch, token):
     origin.push(refspec=f"{branch}:{branch}")
 
  
- def get_commit_from_branch(repo, branch_name): 
+def get_commit_from_branch(repo, branch_name): 
     """
     Obtém o commit de um branch remoto específico.
     """
