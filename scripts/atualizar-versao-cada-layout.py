@@ -2,6 +2,7 @@ import os
 import json
 import git
 import sys
+import subprocess
 from git import Repo
 
 # Função para clonar o repositório
