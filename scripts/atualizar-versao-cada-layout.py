@@ -253,6 +253,25 @@ def get_changed_folders(repo_path, origin_branch, base_branch):
         return set()
  
  
+ 
+def checkout_branch(repo, branch_name):
+    """
+    Faz o checkout para o branch especificado em um repositório clonado.
+    """
+    try:
+        # Verifica se o branch já existe localmente
+        if branch_name not in repo.branches:
+            # Caso não exista localmente, cria um tracking branch para o branch remoto
+            print(f"Branch {branch_name} não encontrado localmente. Fazendo o checkout para o branch remoto.")
+            repo.git.checkout(f'origin/{branch_name}')
+        else:
+            # Faz o checkout para o branch local
+            print(f"Fazendo checkout para o branch {branch_name}.")
+            repo.git.checkout(branch_name)
+    except Exception as e:
+        print(f"Erro ao fazer checkout para o branch {branch_name}: {e}")
+        raise 
+ 
 # Função principal
 def main():
     if len(sys.argv) < 4:
@@ -268,7 +287,9 @@ def main():
 
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
-
+    
+    checkout_branch(repo, origin_branch)
+    
     # --compare_commits_and_folders(repo, origin_branch, base_branch)
     modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
 
