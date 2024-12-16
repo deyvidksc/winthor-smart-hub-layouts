@@ -88,7 +88,7 @@ def get_modified_folders(modified_files):
     return modified_folders
 
 
-    def compare_commits_and_folders(repo, origin_branch, base_branch): 
+def compare_commits_and_folders(repo, origin_branch, base_branch): 
     """
     Compara dois branches e retorna as pastas alteradas entre os commits dos branches.
     
