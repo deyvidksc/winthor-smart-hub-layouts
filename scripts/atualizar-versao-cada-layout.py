@@ -271,10 +271,13 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Comparando {branch_base} com {branch_origem}...")
     diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
 
+    # Lista para armazenar as pastas com diferenças
+    dirs = set()
+    dirsReturn = set()
     if diff:
         print(f'Diferenças encontradas entre {branch_base} e {branch_origem}:')
         # Filtrar apenas pastas (diretórios)
-        dirs = set()
+        #dirs = set()
         for line in diff.splitlines():
             # Verifica se o item é uma pasta (diretório)
             if line.endswith('/'):  # Verifica se o caminho termina com '/'
@@ -293,7 +296,8 @@ def comparar_diferencas(repo, branch_base, branch_origem):
             print("Nenhuma pasta com diferenças encontrada.")
     else:
         print(f'Não há diferenças entre {branch_base} e {branch_origem}.')
-        
+ # Retornar as pastas com diferenças
+    return dirs 
         
 # Função para comparar as diferenças entre os branches
 def compare_differ(repo, branch_base, branch_origem):
@@ -339,9 +343,9 @@ def main():
     repo = clone_repo(repo_url, token, local_folder)
 
     
-    comparar_diferencas(repo, base_branch, origin_branch)
+    
     #checkout_branch(repo, origin_branch, local_folder)
-     modified_folders = compare_differ(repo, base_branch, origin_branch);
+     modified_folders = comparar_diferencas(repo, base_branch, origin_branch)
     # Verificar diferenças entre os branches
     #if has_diff_between_branches(repo, origin_branch, base_branch):
     if modified_folders:
