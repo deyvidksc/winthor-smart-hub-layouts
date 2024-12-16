@@ -223,15 +223,16 @@ def commit_and_push(repo, branch, token):
 
    
  
-def get_changed_folders(repo_path, branch1, branch2):
+def get_changed_folders(repo_path, origin_branch, base_branch):
     """
     Executa git diff para obter as pastas alteradas entre dois branches
     e retorna as pastas modificadas.
     """
-    try:
-        # Comando git diff para obter os arquivos modificados entre dois branches
+    try: 
+    
+        # Comando git diff para obter os arquivos modificados entre dois branches remotos
         result = subprocess.run(
-            ['git', 'diff', f'{branch1}..{branch2}', '--name-only'],
+            ['git', 'diff', f'origin/{origin_branch}..origin/{base_branch}', '--name-only'],
             cwd=repo_path,  # Diretório do repositório
             check=True,
             stdout=subprocess.PIPE,
