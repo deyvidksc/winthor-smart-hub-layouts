@@ -249,12 +249,18 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Fazendo checkout no branch remoto {branch_origem}...")
     try:
         # Criar um novo branch local que acompanha o branch remoto
-        repo.git.checkout('-b', branch_origem, f'{branch_origem}')
+        repo.git.checkout('-b', branch_origem, f'origin/{branch_origem}')
         repo.git.pull()
     except git.exc.GitCommandError as e:
         print(f"Erro ao fazer checkout no branch remoto {branch_origem}: {e}")
         sys.exit(1)
 
+
+    # Listar branches locais
+    print("Branches locais:")
+    for branch in repo.branches:
+        print(f"- {branch.name}")
+        
     # Verificar o estado atual do repositório
     print(f"Estado atual do repositório:")
 
@@ -269,7 +275,7 @@ def comparar_diferencas(repo, branch_base, branch_origem):
 
     # Comparando as diferenças entre o branch base (local) e o branch de origem (remoto)
     print(f"Comparando {branch_base} com {branch_origem}...")
-    diff = repo.git.diff(f"{branch_base}..{branch_origem}", '--name-only')
+    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
 
     # Lista para armazenar as pastas com diferenças
     dirs = set() 
