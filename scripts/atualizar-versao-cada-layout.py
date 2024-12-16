@@ -280,15 +280,15 @@ def checkout_branch(repo, branch_name, repo_path):
  
  
 # Função para comparar as diferenças entre os branches
-def comparar_diferencas(repo, branch_base, branch_origem):
+def comparar_diferencas(repo, branch_origem, branch_base ):
     # Atualizar os branches remotos
     print(f"Atualizando o repositório...")
     repo.git.fetch()
 
     # Garantir que o branch base esteja correto
-    print(f"Fazendo checkout no branch {branch_base}...")
-    repo.git.checkout(branch_base)
-    repo.git.pull()
+    #print(f"Fazendo checkout no branch {branch_base}...")
+    #repo.git.checkout(branch_base)
+    #repo.git.pull()
 
     # Garantir que o branch de origem esteja correto
     print(f"Fazendo checkout no branch {branch_origem}...")
@@ -301,8 +301,8 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Branch de origem: origin/{branch_origem}")
 
     # Comparando as diferenças entre o branch base e o branch de origem
-    print(f"Comparando {branch_base} com origin/{branch_origem}...")
-    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
+    print(f"Comparando {branch_origem} com origin/{branch_base}...")
+    diff = repo.git.diff(f"{branch_origem}..origin/{branch_base}", '--name-only')
 
     if diff:
         print(f'Diferenças encontradas entre {branch_base} e origin/{branch_origem}:')
