@@ -212,24 +212,14 @@ def main():
         print(f"O branch '{current_branch}' tem diferenças em relação ao '{trunk_branch}'.")
 
         # Iterar pelas pastas e atualizar o versao.json
-       """ for dirpath, dirnames, filenames in os.walk(local_folder):
-            # Verificando se o diretório contém um arquivo versao.json
-            if 'versao.json' in filenames:
-                print(f"Verificando alterações na pasta: {dirpath}")
-                # Verificando se houve alterações no diretório entre os dois branches remotos
-                if has_changes_in_directory(repo, trunk_branch, current_branch, dirpath):
-                    print(f"Alterações detectadas em: {dirpath}")
-                    # Se houver alterações, atualizar o versao.json
-                    update_version_json(dirpath)"""
-
-
+ 
 
             # Obtém as pastas do repositório, excluindo as pastas indesejadas
             folders_to_check = get_folders_to_check()
 
             try:
                
-                    changed_files = get_changed_files(branch_base, branch_origem)
+                    changed_files = get_changed_files(trunk_branch, current_branch)
                     for file in changed_files:
                         print(f"Alterações detectadas em: {file}")
                      #if 'versao.json' in file:
