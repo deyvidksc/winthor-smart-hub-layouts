@@ -213,23 +213,21 @@ def main():
 
         # Iterar pelas pastas e atualizar o versao.json
  
+        try:
 
-            # Obtém as pastas do repositório, excluindo as pastas indesejadas
-            folders_to_check = get_folders_to_check()
-
-            try:
-               
-                    changed_files = get_changed_files(trunk_branch, current_branch)
-                    for file in changed_files:
-                        print(f"Alterações detectadas em: {file}")
-                     #if 'versao.json' in file:
-                        for folder in folders_to_check:
-                            if file.startswith(folder):
-                                
-                                 #update_version_json(file)
-            except Exception as e:
-                print(f"Erro: {e}")
-                sys.exit(1)
+        # Obtém as pastas do repositório, excluindo as pastas indesejadas
+            folders_to_check = get_folders_to_check()               
+            changed_files = get_changed_files(trunk_branch, current_branch)
+            for file in changed_files:
+                print(f"Alterações detectadas em: {file}")
+                #if 'versao.json' in file:
+                for folder in folders_to_check:
+                    if file.startswith(folder): 
+                        print(f"Alterações detectadas em -> : {file}")
+                        #update_version_json(file)
+        except Exception as e:
+            print(f"Erro: {e}")
+            sys.exit(1)
 
 
         # Fazer commit e push das alterações
