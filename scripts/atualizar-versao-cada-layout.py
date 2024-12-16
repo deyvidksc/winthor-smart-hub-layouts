@@ -12,16 +12,35 @@ def clone_repo(repo_url, token, local_dir):
 
 # Função para verificar se há diferenças entre dois branches
 def has_diff_between_branches(repo, trunk_branch, current_branch):
-    # Tente acessar os branches remotos explicitamente
+    # Acessando os branches remotos explicitamente
     branch1 = f'refs/remotes/origin/{trunk_branch}'  # Se for um branch remoto
     branch2 = f'refs/remotes/origin/{current_branch}'  # Se for um branch remoto
     
-    commit1 = repo.commit(branch1)
-    commit2 = repo.commit(branch2)
+    # Obtendo os commits de cada branch
+    commits1 = list(repo.iter_commits(branch1))
+    commits2 = list(repo.iter_commits(branch2))
+    
+    # Criando sets para facilitar a comparação
+    commits1_set = set(commit.hexsha for commit in commits1)
+    commits2_set = set(commit.hexsha for commit in commits2)
 
-    # Obter o diff entre os dois commits
-    diffs = commit1.diff(commit2)
-    return len(diffs) > 0  # Retorna True se houver diferenças
+    # Encontrando commits exclusivos para cada branch
+    unique_commits1 = commits1_set - commits2_set
+    unique_commits2 = commits2_set - commits1_set
+
+    # Se houver commits exclusivos, significa que há diferenças
+    if unique_commits1 or unique_commits2:
+        return True
+
+    # Caso não tenha commits exclusivos, comparando as diferenças nos arquivos dos commits
+    for commit1 in commits1:
+        for commit2 in commits2:
+            # Obtendo as diferenças entre os commits
+            diffs = commit1.diff(commit2)
+            if diffs:
+                return True  # Se houver qualquer diferença, retorna True
+
+    return False  # Caso não haja diferenças entre os commits
  
 # Função para ler a versão de version.txt
 def get_version_from_file():
