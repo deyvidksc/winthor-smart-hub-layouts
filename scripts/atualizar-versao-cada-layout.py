@@ -53,27 +53,23 @@ def get_commit_from_branch(repo, branch_name):
         raise
     return commit
 
-def prepare_tree_parser(repo, commit): 
-    # Obtendo a árvore do commit (representação dos arquivos)
-    tree = commit.tree
-    return repo.git.cat_file('commit', commit.hexsha + "^{tree}")
+def prepare_tree_parser(commit): 
+    return commit.tree
 
-
-def has_changes_in_directory(repo, trunk_branch, current_branch, directory):
-   # Obtendo os commits dos branches
+def has_changes_in_directory(repo, trunk_branch, current_branch, directory): 
+    # Obtendo os commits dos branches
     commit_trunk = get_commit_from_branch(repo, trunk_branch)
     commit_current = get_commit_from_branch(repo, current_branch)
 
-    # Preparando os TreeParsers para os commits
-    old_tree = prepare_tree_parser(repo, commit_trunk)
-    new_tree = prepare_tree_parser(repo, commit_current)
+    # Preparando as árvores dos commits
+    old_tree = prepare_tree_parser(commit_trunk)
+    new_tree = prepare_tree_parser(commit_current)
 
     # Comparando os diffs entre os dois commits no diretório especificado
     diffs = repo.git.diff(old_tree, new_tree, '--', directory)
 
     # Se houver qualquer diferença, retorna True
     return bool(diffs.strip())  # Se a string de diffs não estiver vazia, significa que há diferenças
-    
  
 # Função para ler a versão de version.txt
 def get_version_from_file():
