@@ -249,7 +249,7 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Fazendo checkout no branch remoto {branch_origem}...")
     try:
         # Criar um novo branch local que acompanha o branch remoto
-        repo.git.checkout('-b', branch_origem, f'origin/{branch_origem}')
+        repo.git.checkout('-b', branch_origem, f'{branch_origem}')
         repo.git.pull()
     except git.exc.GitCommandError as e:
         print(f"Erro ao fazer checkout no branch remoto {branch_origem}: {e}")
@@ -269,11 +269,10 @@ def comparar_diferencas(repo, branch_base, branch_origem):
 
     # Comparando as diferenças entre o branch base (local) e o branch de origem (remoto)
     print(f"Comparando {branch_base} com {branch_origem}...")
-    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
+    diff = repo.git.diff(f"{branch_base}..{branch_origem}", '--name-only')
 
     # Lista para armazenar as pastas com diferenças
-    dirs = set()
-    dirsReturn = set()
+    dirs = set() 
     if diff:
         print(f'Diferenças encontradas entre {branch_base} e {branch_origem}:')
         # Filtrar apenas pastas (diretórios)
@@ -298,32 +297,7 @@ def comparar_diferencas(repo, branch_base, branch_origem):
         print(f'Não há diferenças entre {branch_base} e {branch_origem}.')
  # Retornar as pastas com diferenças
     return dirs 
-        
-# Função para comparar as diferenças entre os branches
-def compare_differ(repo, branch_base, branch_origem):
-    print(f"Comparando {branch_base} com {branch_origem}...")
-    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
-
-    modified_folders = set()
-    if diff:
-        print(f'Diferenças encontradas entre {branch_base} e {branch_origem}:')
-        # Filtrar pastas (diretórios)
-        for line in diff.splitlines():
-            if line.endswith('/'):
-                modified_folders.add(line)
-            else:
-                # Adiciona o diretório pai se for um arquivo dentro de um diretório
-                dir_name = os.path.dirname(line)
-                if dir_name:
-                    modified_folders.add(dir_name + '/')
-        if modified_folders:
-            print(f"Pastas com alterações: {modified_folders}")
-        else:
-            print("Nenhuma pasta com diferenças encontrada.")
-    else:
-        print(f'Não há diferenças entre {branch_base} e {branch_origem}.')
-    
-    return modified_folders        
+       
         
 # Função principal
 def main():
@@ -341,7 +315,6 @@ def main():
 
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
-
     
     
     #checkout_branch(repo, origin_branch, local_folder)
