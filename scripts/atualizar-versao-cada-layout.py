@@ -256,7 +256,7 @@ def get_changed_folders(repo_path, origin_branch, base_branch):
  
  
  
-def checkout_branch(repo, branch_name):
+def checkout_branch(repo, branch_name, repo_path):
     """
     Faz o checkout para o branch especificado em um repositório clonado.
     """
@@ -294,7 +294,7 @@ def main():
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
     
-    checkout_branch(repo, origin_branch)
+    checkout_branch(repo, origin_branch, local_folder)
     
     # --compare_commits_and_folders(repo, origin_branch, base_branch)
     modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
