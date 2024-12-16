@@ -237,7 +237,7 @@ def main():
                 if 'versao.json' in filenames:
                     print(f"Verificando alterações na pasta: {dirpath}")
                     # Verificando se houve alterações no diretório entre os dois branches remotos
-                    if has_changes_in_directory(repo, trunk_branch, current_branch, dirpath):
+                    if has_changes_in_directory(repo, origin_branch, base_branch, dirpath):
                         print(f"Alterações detectadas em: {dirpath}")
                         # Se houver alterações, atualizar o versao.json
                         update_version_json(dirpath)       
@@ -247,9 +247,9 @@ def main():
 
 
         # Fazer commit e push das alterações
-        commit_and_push(repo, current_branch, token)
+        commit_and_push(repo, base_branch, token)
     else:
-        print(f"Não há diferenças entre os branches '{trunk_branch}' e '{current_branch}'.")
+        print(f"Não há diferenças entre os branches '{origin_branch}' e '{base_branch}'.")
 
 if __name__ == "__main__":
     main()
