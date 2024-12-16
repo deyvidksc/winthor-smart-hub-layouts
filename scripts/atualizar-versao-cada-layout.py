@@ -319,11 +319,11 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Branch de origem: {branch_origem}")
 
     # Comparando as diferenças entre o branch base (local) e o branch de origem (remoto)
-    print(f"Comparando {branch_base} com origin/{branch_origem}...")
-    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
+    print(f"Comparando {branch_base} com {branch_origem}...")
+    diff = repo.git.diff(f"{branch_base}..{branch_origem}", '--name-only')
 
     if diff:
-        print(f'Diferenças encontradas entre {branch_base} e origin/{branch_origem}:')
+        print(f'Diferenças encontradas entre {branch_base} e {branch_origem}:')
         # Filtrar apenas pastas (diretórios)
         dirs = set()
         for line in diff.splitlines():
@@ -336,7 +336,7 @@ def comparar_diferencas(repo, branch_base, branch_origem):
         else:
             print("Nenhuma pasta com diferenças encontrada.")
     else:
-        print(f'Não há diferenças entre {branch_base} e origin/{branch_origem}.')
+        print(f'Não há diferenças entre {branch_base} e {branch_origem}.')
         
 # Função principal
 def main():
