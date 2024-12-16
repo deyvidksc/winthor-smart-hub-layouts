@@ -301,7 +301,14 @@ def comparar_diferencas(repo, branch_base, branch_origem):
 
     # Verificar o estado atual do repositório
     print(f"Estado atual do repositório:")
-    print(f"Branch base: {repo.active_branch}")
+
+    # Verificando o estado da HEAD
+    if repo.head.is_detached:
+        print(f"Você está em um estado de detached HEAD em {repo.head.commit.hexsha}")
+    else:
+        print(f"Branch ativo: {repo.active_branch}")
+
+    print(f"Branch base: {branch_base}")
     print(f"Branch de origem: {branch_origem}")
 
     # Comparando as diferenças entre o branch base (local) e o branch de origem (remoto)
