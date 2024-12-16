@@ -221,10 +221,10 @@ def commit_and_push(repo, branch, token):
     # Realiza o push para o branch remoto
     origin.push(refspec=f"{branch}:{branch}")
 
- 
-# Função para comparar as diferenças entre os branches
-def comparar_diferencas(repo, branch_base, branch_origem):
 
+
+
+def comparar_diferencas(repo, branch_base, branch_origem):
     # Listar branches locais
     print("Branches locais:")
     for branch in repo.branches:
@@ -255,12 +255,6 @@ def comparar_diferencas(repo, branch_base, branch_origem):
         print(f"Erro ao fazer checkout no branch remoto {branch_origem}: {e}")
         sys.exit(1)
 
-
-    # Listar branches locais
-    print("Branches locais:")
-    for branch in repo.branches:
-        print(f"- {branch.name}")
-        
     # Verificar o estado atual do repositório
     print(f"Estado atual do repositório:")
 
@@ -277,12 +271,10 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Comparando {branch_base} com {branch_origem}...")
     diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
 
-    # Lista para armazenar as pastas com diferenças
-    dirs = set() 
+    # Caso haja diferenças
     if diff:
         print(f'Diferenças encontradas entre {branch_base} e {branch_origem}:')
-        # Filtrar apenas pastas (diretórios)
-        #dirs = set()
+        dirs = set()
         for line in diff.splitlines():
             # Verifica se o item é uma pasta (diretório)
             if line.endswith('/'):  # Verifica se o caminho termina com '/'
@@ -293,16 +285,20 @@ def comparar_diferencas(repo, branch_base, branch_origem):
                 if dir_name:
                     dirs.add(dir_name + '/')
 
+        # Se houver diretórios com diferenças
         if dirs:
             print("Pastas com diferenças:")
             for dir in dirs:
                 print(f"- {dir}")
+            return dirs  # Retorna as pastas com diferenças
         else:
             print("Nenhuma pasta com diferenças encontrada.")
+            return []  # Nenhuma pasta com diferença
     else:
         print(f'Não há diferenças entre {branch_base} e {branch_origem}.')
- # Retornar as pastas com diferenças
-    return dirs 
+        return []  # Nenhuma diferença detectada
+
+     
        
         
 # Função principal
