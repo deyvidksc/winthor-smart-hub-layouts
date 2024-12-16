@@ -300,7 +300,6 @@ def comparar_diferencas(repo, branch_base, branch_origem):
         print(f"Erro ao fazer checkout no branch remoto {branch_origem}: {e}")
         sys.exit(1)
 
-
     # Listar branches locais
     print("Branches locais:")
     for branch in repo.branches:
@@ -319,15 +318,16 @@ def comparar_diferencas(repo, branch_base, branch_origem):
     print(f"Branch de origem: {branch_origem}")
 
     # Comparando as diferenças entre o branch base (local) e o branch de origem (remoto)
-    print(f"Comparando {branch_base} com {branch_origem}...")
-    diff = repo.git.diff(f"{branch_base}..{branch_origem}", '--name-only')
+    print(f"Comparando {branch_base} com origin/{branch_origem}...")
+    diff = repo.git.diff(f"{branch_base}..origin/{branch_origem}", '--name-only')
 
     if diff:
         print(f'Diferenças encontradas entre {branch_base} e {branch_origem}:')
         # Filtrar apenas pastas (diretórios)
         dirs = set()
         for line in diff.splitlines():
-            if os.path.isdir(line):
+            # Verifica se o item é uma pasta, ou seja, se o caminho termina com '/'
+            if line.endswith('/'):
                 dirs.add(line)
         if dirs:
             print("Pastas com diferenças:")
