@@ -50,18 +50,68 @@ def get_commit_from_branch(repo, branch_name):
     Obtém o commit de um branch remoto específico.
     """
     try:
+        # Obtemos o commit mais recente do branch remoto
         commit = repo.commit(f'refs/remotes/origin/{branch_name}')
+        print(f"Commit do branch {branch_name} obtido com sucesso: {commit.hexsha}")
     except Exception as e:
         print(f"Erro ao acessar o commit do branch {branch_name}: {e}")
         raise
     return commit
 
-def prepare_tree_parser(commit): 
+def get_modified_files(repo, old_commit, new_commit):
     """
-    Prepara e retorna a árvore (tree) de um commit.
+    Obtém os arquivos modificados entre dois commits.
     """
-    return commit.tree
+    try:
+        # Usando git diff para obter apenas os arquivos modificados entre dois commits
+        diff = repo.git.diff('--name-only', old_commit.hexsha, new_commit.hexsha)
+        if diff:
+            print(f"Differences entre {old_commit.hexsha} e {new_commit.hexsha}:")
+            print(diff)  # Exibe as diferenças encontradas
+        else:
+            print(f"Sem diferenças encontradas entre {old_commit.hexsha} e {new_commit.hexsha}.")
+        modified_files = diff.splitlines()  # Divide a saída em uma lista de arquivos
+        return modified_files
+    except Exception as e:
+        print(f"Erro ao executar git diff: {e}")
+        return []
+        
+        
+def get_modified_folders(modified_files):
+    """
+    Extrai as pastas das listas de arquivos modificados.
+    """
+    modified_folders = set()
+    for file in modified_files:
+        folder = file.split('/')[0]  # Considera a pasta como a parte antes da primeira barra "/"
+        modified_folders.add(folder)
+    return modified_folders
 
+
+    def compare_commits_and_folders(repo, origin_branch, base_branch): 
+    """
+    Compara dois branches e retorna as pastas alteradas entre os commits dos branches.
+    
+    Parameters:
+    - repo: O repositório GitPython.
+    - origin_branch: O branch de origem.
+    - base_branch: O branch de destino.
+    
+    Retorna:
+    - As pastas alteradas entre os dois branches.
+    """
+    # Obtendo os commits dos branches
+    commit_origin = get_commit_from_branch(repo, origin_branch)
+    commit_base = get_commit_from_branch(repo, base_branch)
+
+    # Obtendo os arquivos modificados entre os commits
+    modified_files = get_modified_files(repo, commit_origin, commit_base)
+
+    # Extraindo as pastas modificadas
+    modified_folders = get_modified_folders(modified_files)
+
+    return modified_folders
+    
 def has_changes_in_directory(repo, origin_branch, base_branch, directory): 
     """
     Verifica se há alterações no diretório especificado entre dois branches.
@@ -171,61 +221,7 @@ def commit_and_push(repo, branch, token):
     # Realiza o push para o branch remoto
     origin.push(refspec=f"{branch}:{branch}")
 
- 
-def get_commit_from_branch(repo, branch_name): 
-    """
-    Obtém o commit de um branch remoto específico.
-    """
-    try:
-        commit = repo.commit(f'refs/remotes/origin/{branch_name}')
-    except Exception as e:
-        print(f"Erro ao acessar o commit do branch {branch_name}: {e}")
-        raise
-    return commit
-
-def get_modified_files(repo, old_commit, new_commit):
-    """
-    Obtém os arquivos modificados entre dois commits.
-    """
-    # Usando git diff para obter apenas os arquivos modificados
-    diff = repo.git.diff('--name-only', old_commit.hexsha, new_commit.hexsha)
-    modified_files = diff.splitlines()  # Divide a saída em uma lista de arquivos
-    return modified_files
-
-def get_modified_folders(modified_files):
-    """
-    Extrai as pastas das listas de arquivos modificados.
-    """
-    modified_folders = set()
-    for file in modified_files:
-        folder = file.split('/')[0]  # Considera a pasta como a parte antes da primeira barra "/"
-        modified_folders.add(folder)
-    return modified_folders
-
-def compare_commits_and_folders(repo, origin_branch, base_branch): 
-    """
-    Compara dois branches e retorna as pastas alteradas entre os commits dos branches.
-    
-    Parameters:
-    - repo: O repositório GitPython.
-    - origin_branch: O branch de origem.
-    - base_branch: O branch de destino.
-    
-    Retorna:
-    - As pastas alteradas entre os dois branches.
-    """
-    # Obtendo os commits dos branches
-    commit_origin = get_commit_from_branch(repo, origin_branch)
-    commit_base = get_commit_from_branch(repo, base_branch)
-
-    # Obtendo os arquivos modificados entre os commits
-    modified_files = get_modified_files(repo, commit_origin, commit_base)
-
-    # Extraindo as pastas modificadas
-    modified_folders = get_modified_folders(modified_files)
-
-    return modified_folders
- 
+   
  
 # Função principal
 def main():
