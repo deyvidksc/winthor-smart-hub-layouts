@@ -13,10 +13,10 @@ def clone_repo(repo_url, token, local_dir):
 
 
 # Função para verificar se há diferenças entre dois branches
-def has_diff_between_branches(repo, trunk_branch, current_branch):
+def has_diff_between_branches(repo, origin_branch, base_branch,):
     # Acessando os branches remotos explicitamente
-    branch1 = f'refs/remotes/origin/{trunk_branch}'  # Se for um branch remoto
-    branch2 = f'refs/remotes/origin/{current_branch}'  # Se for um branch remoto
+    branch1 = f'refs/remotes/origin/{origin_branch}'  # Se for um branch remoto
+    branch2 = f'refs/remotes/origin/{base_branch}'  # Se for um branch remoto
     
     # Obtendo os commits de cada branch
     commits1 = list(repo.iter_commits(branch1))
@@ -46,7 +46,9 @@ def has_diff_between_branches(repo, trunk_branch, current_branch):
 
 
 def get_commit_from_branch(repo, branch_name): 
-    # Usar a referência completa para o branch remoto
+    """
+    Obtém o commit de um branch remoto específico.
+    """
     try:
         commit = repo.commit(f'refs/remotes/origin/{branch_name}')
     except Exception as e:
@@ -55,12 +57,27 @@ def get_commit_from_branch(repo, branch_name):
     return commit
 
 def prepare_tree_parser(commit): 
+    """
+    Prepara e retorna a árvore (tree) de um commit.
+    """
     return commit.tree
 
-def has_changes_in_directory(repo, trunk_branch, current_branch, directory): 
+def has_changes_in_directory(repo, origin_branch, base_branch, directory): 
+    """
+    Verifica se há alterações no diretório especificado entre dois branches.
+    
+    Parameters:
+    - repo: O repositório GitPython.
+    - origin_branch: O branch de origem.
+    - base_branch: O branch de destino.
+    - directory: O diretório a ser comparado.
+    
+    Retorna:
+    - True se houver alterações no diretório, False caso contrário.
+    """
     # Obtendo os commits dos branches
-    commit_trunk = get_commit_from_branch(repo, trunk_branch)
-    commit_current = get_commit_from_branch(repo, current_branch)
+    commit_trunk = get_commit_from_branch(repo, origin_branch)
+    commit_current = get_commit_from_branch(repo, base_branch)
 
     # Preparando as árvores dos commits
     old_tree = prepare_tree_parser(commit_trunk)
@@ -71,6 +88,7 @@ def has_changes_in_directory(repo, trunk_branch, current_branch, directory):
 
     # Se houver qualquer diferença, retorna True
     return bool(diffs.strip())  # Se a string de diffs não estiver vazia, significa que há diferenças
+
  
 # Função para ler a versão de version.txt
 def get_version_from_file():
@@ -200,8 +218,8 @@ def main():
 
     # Parâmetros
     token = sys.argv[1]
-    trunk_branch = sys.argv[2]
-    current_branch = sys.argv[3]
+    origin_branch = sys.argv[2]
+    base_branch = sys.argv[3]
     repo_url = "https://github.com/deyvidksc/winthor-smart-hub-layouts.git"
     local_folder = "/tmp/git_repo"  # Defina o diretório local onde o repositório será clonado
 
@@ -209,23 +227,33 @@ def main():
     repo = clone_repo(repo_url, token, local_folder)
 
     # Verificar diferenças entre os branches
-    if has_diff_between_branches(repo, trunk_branch, current_branch):
-        print(f"O branch '{current_branch}' tem diferenças em relação ao '{trunk_branch}'.")
-
-        # Iterar pelas pastas e atualizar o versao.json
+    if has_diff_between_branches(repo, origin_branch, base_branch):
+        print(f"O branch '{origin_branch}' tem diferenças em relação ao '{base_branch}'.")
  
         try:
+        
+        
+            # Iterar pelas pastas e atualizar o versao.json
+            for dirpath, dirnames, filenames in os.walk(local_folder):
+                # Verificando se o diretório contém um arquivo versao.json
+                if 'versao.json' in filenames:
+                    print(f"Verificando alterações na pasta: {dirpath}")
+                    # Verificando se houve alterações no diretório entre os dois branches remotos
+                    if has_changes_in_directory(repo, trunk_branch, current_branch, dirpath):
+                        print(f"Alterações detectadas em: {dirpath}")
+                        # Se houver alterações, atualizar o versao.json
+                        update_version_json(dirpath)
 
         # Obtém as pastas do repositório, excluindo as pastas indesejadas
-            folders_to_check = get_folders_to_check()               
-            changed_files = get_changed_files(trunk_branch, current_branch)
+         """   folders_to_check = get_folders_to_check()               
+            changed_files = get_changed_files(origin_branch, base_branch)
             for file in changed_files:
                 print(f"Alterações detectadas em: {file}")
                 #if 'versao.json' in file:
                 for folder in folders_to_check:
                     if file.startswith(folder): 
                         print(f"Alterações detectadas em -> : {file}")
-                        #update_version_json(file)
+                        #update_version_json(file)"""
         except Exception as e:
             print(f"Erro: {e}")
             sys.exit(1)
