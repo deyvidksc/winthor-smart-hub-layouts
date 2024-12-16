@@ -228,9 +228,13 @@ def get_changed_folders(repo_path, origin_branch, base_branch):
     Executa git diff para obter as pastas alteradas entre dois branches
     e retorna as pastas modificadas.
     """
-    try: 
-    
-        # Comando git diff para obter os arquivos modificados entre dois branches remotos
+    try:
+        # Primeiro, faça o fetch para garantir que você tem as últimas atualizações dos branches remotos
+        print("Atualizando os branches remotos...")
+        subprocess.run(['git', 'fetch'], cwd=repo_path, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Agora, execute o git diff para obter as diferenças entre os branches remotos
+        print(f"Comparando os branches remotos {origin_branch} e {base_branch}...")
         result = subprocess.run(
             ['git', 'diff', f'origin/{origin_branch}..origin/{base_branch}', '--name-only'],
             cwd=repo_path,  # Diretório do repositório
@@ -288,7 +292,7 @@ def main():
     # Clonar o repositório
     repo = clone_repo(repo_url, token, local_folder)
     
-    checkout_branch(repo, origin_branch)
+    #checkout_branch(repo, origin_branch)
     
     # --compare_commits_and_folders(repo, origin_branch, base_branch)
     modified_folders = get_changed_folders(local_folder, origin_branch, base_branch)
