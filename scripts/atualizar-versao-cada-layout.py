@@ -152,6 +152,45 @@ def commit_and_push(repo, branch, token):
     # Realiza o push para o branch remoto
     origin.push(refspec=f"{branch}:{branch}")
 
+
+
+def get_changed_files(base_branch, compare_branch):
+    """
+    Retorna uma lista de arquivos alterados entre os dois branches.
+    """
+    command = ["git", "diff", "--name-only", f"{base_branch}...{compare_branch}"]
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise Exception(f"Erro ao executar git diff: {result.stderr}")
+    return result.stdout.splitlines()
+
+def get_folders_to_check():
+    """
+    Retorna uma lista de todas as pastas do repositório, excluindo as pastas indesejadas.
+    """
+    # Lista de pastas a serem ignoradas
+    excluded_folders = [".github", ".idea", ".version-control", ".git", "target"]
+    
+    # Obtém todas as pastas no repositório, excluindo as indesejadas
+    folders_to_check = []
+    for root, dirs, files in os.walk("."):
+        # Filtra as pastas indesejadas
+        dirs[:] = [d for d in dirs if d not in excluded_folders]
+        if root != "." and any(file for file in files):  # Ignora a raiz se não tiver arquivos
+            folders_to_check.append(root)
+    
+    return folders_to_check
+
+def check_changes_in_folders(changed_files, folders_to_check):
+    """
+    Verifica se houve alterações nas pastas especificadas.
+    """
+    for file in changed_files:
+        for folder in folders_to_check:
+            if file.startswith(folder):
+                return True
+    return False
+
 # Função principal
 def main():
     if len(sys.argv) < 4:
@@ -173,7 +212,7 @@ def main():
         print(f"O branch '{current_branch}' tem diferenças em relação ao '{trunk_branch}'.")
 
         # Iterar pelas pastas e atualizar o versao.json
-        for dirpath, dirnames, filenames in os.walk(local_folder):
+       """ for dirpath, dirnames, filenames in os.walk(local_folder):
             # Verificando se o diretório contém um arquivo versao.json
             if 'versao.json' in filenames:
                 print(f"Verificando alterações na pasta: {dirpath}")
@@ -181,7 +220,27 @@ def main():
                 if has_changes_in_directory(repo, trunk_branch, current_branch, dirpath):
                     print(f"Alterações detectadas em: {dirpath}")
                     # Se houver alterações, atualizar o versao.json
-                    update_version_json(dirpath)
+                    update_version_json(dirpath)"""
+
+
+
+            # Obtém as pastas do repositório, excluindo as pastas indesejadas
+            folders_to_check = get_folders_to_check()
+
+            try:
+               
+                    changed_files = get_changed_files(branch_base, branch_origem)
+                    for file in changed_files:
+                        print(f"Alterações detectadas em: {file}")
+                     #if 'versao.json' in file:
+                        for folder in folders_to_check:
+                            if file.startswith(folder):
+                                
+                                 #update_version_json(file)
+            except Exception as e:
+                print(f"Erro: {e}")
+                sys.exit(1)
+
 
         # Fazer commit e push das alterações
         commit_and_push(repo, current_branch, token)
