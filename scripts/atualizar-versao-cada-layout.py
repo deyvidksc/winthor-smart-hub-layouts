@@ -345,7 +345,7 @@ def main():
     
     
     #checkout_branch(repo, origin_branch, local_folder)
-     modified_folders = comparar_diferencas(repo, base_branch, origin_branch)
+    modified_folders = comparar_diferencas(repo, base_branch, origin_branch)
     # Verificar diferenças entre os branches
     #if has_diff_between_branches(repo, origin_branch, base_branch):
     if modified_folders:
