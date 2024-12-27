@@ -1,6 +1,6 @@
 {
     "tabela": {
-        "nome": "PCINTEGRACAODADOSEMPRESA",
+        "nome":  "PCINTEGRACAODADOSEMPRESA",
         "campos": [
             {
                 "nome": "ID",
